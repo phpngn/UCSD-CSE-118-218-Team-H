@@ -1,13 +1,16 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import DB from './db/mysql';
 
 dotenv.config();
 
 const app: Express = express();
 const port:string | undefined = process.env.PORT;
+const db = new DB();
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('<meta http-equiv="refresh" content="0; url=https://www.youtube.com/watch?v=dQw4w9WgXcQ">');
+app.get('/', async (req: Request, res: Response) => {
+    await db.testConnection();
+    res.send('Nö');
 });
 
 app.post('/data/add/heartrate', (req: Request, res: Response) => {
