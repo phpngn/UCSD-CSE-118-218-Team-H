@@ -22,21 +22,20 @@ app.post('/data/add/falldetection', (req: Request, res: Response) => {
     res.send('ad');
 });
 
-app.post('/data/add/heartrate', (req: Request, res: Response) => {
-    res.send('adr');
-});
-
-app.post('/data/retrieve/heartrate', (req: Request, res: Response) => {
+app.get('/data/retrieve/heartrate', (req: Request, res: Response) => {
     res.send('adri');
 });
 
-app.post('/data/retrieve/bloodoxygen', (req: Request, res: Response) => {
+app.get('/data/retrieve/bloodoxygen', (req: Request, res: Response) => {
     res.send('adria');
 });
 
-app.post('/data/retrieve/falldetection', (req: Request, res: Response) => {
+app.get('/data/retrieve/falldetection', (req: Request, res: Response) => {
     res.send('adrian');
 });
+
+
+
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
