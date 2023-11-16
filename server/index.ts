@@ -7,7 +7,7 @@ const app: Express = express();
 const port:string | undefined = process.env.PORT;
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
+    res.send('<meta http-equiv="refresh" content="0; url=https://www.youtube.com/watch?v=dQw4w9WgXcQ">');
 });
 
 app.post('/data/add/heartrate', (req: Request, res: Response) => {
