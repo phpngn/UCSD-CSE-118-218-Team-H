@@ -1,17 +1,15 @@
-import {express} from 'express';
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
 
-const app = express();
-const port = 3000;
+dotenv.config();
 
-// Set EJS as the view engine
-app.set('view engine', 'ejs');
+const app: Express = express();
+const port = process.env.PORT;
 
-// Define a route to render a template
-app.get('/', (req, res) => {
-    // Render the 'index' template and pass some data to it
-    res.render('index', { title: 'Express Template Example', message: 'Hello, World!' });
+app.get('/', (req: Request, res: Response) => {
+    res.send('Express + TypeScript Server');
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
