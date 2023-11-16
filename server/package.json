@@ -1,12 +1,13 @@
 {
-  "name": "server",
+  "name": "UbiquiCare",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Prevents old people from visiting heaven",
+  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.ts",
+    "dev": "nodemon index.ts"
   },
-  "author": "",
+  "author": "Best team ever",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
