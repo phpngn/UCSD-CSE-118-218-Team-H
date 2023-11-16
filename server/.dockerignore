@@ -1,0 +1,19 @@
+# Ignore node_modules directory
+node_modules
+
+# Ignore log files
+*.log
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore development files
+.vscode/
+*.md
+*.json
+*.lock
+*.config.js
+*.config.ts
+*.map
+*.tsbuildinfo
