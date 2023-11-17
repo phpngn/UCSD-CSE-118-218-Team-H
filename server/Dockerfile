@@ -1,7 +1,8 @@
 FROM node:slim
 
 WORKDIR /app
-COPY package*.json ./
+COPY package.json ./
+COPY package-lock.json ./
 RUN npm install
 COPY . .
 

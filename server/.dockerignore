@@ -11,8 +11,6 @@ docker-compose.yml
 # Ignore development files
 .vscode/
 *.md
-*.json
-*.lock
 *.config.js
 *.config.ts
 *.map
