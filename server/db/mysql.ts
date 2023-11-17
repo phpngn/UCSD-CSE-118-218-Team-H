@@ -24,6 +24,20 @@ export default class DB {
         });
     }
 
+    async initSchema() {
+        const schema = fs.readFileSync("./db/schema.sql", 'utf8');
+        const statements:string[] = schema.split(";");
+        return await this.executeMultiple(statements)
+    }
+
+    async executeMultiple(queries:string[],params:any[][] = []) {
+        let res:QueryResult[] = [];
+        for(let i =0; i < queries.length; i++){
+            res.push(await this.executePreparedStatement(queries[i],params[i]));
+        }
+        return res;
+    }
+
     async executePreparedStatement(sql:string, params:any[] = []) {
         try {
             let [rows, fields]:any = await this.connection?.execute(sql,params)
