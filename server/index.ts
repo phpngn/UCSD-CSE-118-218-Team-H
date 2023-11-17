@@ -9,7 +9,7 @@ const port:string | undefined = process.env.PORT;
 const db = new DB();
 
 app.get('/', async (req: Request, res: Response) => {
-    await db.testConnection();
+    await db.initSchema();
     res.send('Nö');
 });
 
