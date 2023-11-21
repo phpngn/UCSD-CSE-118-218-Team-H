@@ -20,6 +20,25 @@ app.get('/api/schema', async (req: Request, res: Response) => {
     res.send('Ok');
 });
 
+app.post('/api/measurement', (req: Request, res: Response) => {
+    switch(req.body.sensor) {
+        case 'heartrate':
+            db.insertHeartRateData(req.body);
+            break;
+        case 'bloodoxygen':
+            db.insertBloodOxygenData(req.body);
+            break;
+        case 'falldetection':
+            db.insertFallEventData(req.body);
+            break;
+        default:
+            console.log("Unknown sensor type");
+            res.send('Unknown sensor type');
+    }
+    
+    res.send('Ok');
+});
+
 app.post('/api/heartrate', (req: Request, res: Response) => {
     db.insertHeartRateData(req.body);
     res.send('Express + TypeScript Server');
