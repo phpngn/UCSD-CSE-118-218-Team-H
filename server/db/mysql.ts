@@ -30,11 +30,12 @@ export default class DB {
     }
 
     async executeMultiple(queries: string[], params: any[][] = []) {
-        let res: QueryResult[] = [];
+        let resultPromises: Promise<QueryResult>[] = [];
         for (let i = 0; i < queries.length; i++) {
-            res.push(await this.executePreparedStatement(queries[i], params[i]));
+            resultPromises.push(this.executePreparedStatement(queries[i], params[i]));
         }
-        return res;
+        Promise.all(resultPromises);
+        return resultPromises;
     }
 
     async executePreparedStatement(sql: string, params: any[] = []) {
@@ -45,22 +46,39 @@ export default class DB {
 
     async insertHeartRateData(data: any) {
         let sql = `INSERT INTO HeartRate (timestamp, value, device_id) VALUES (?,?,?)`;
-        return await this.executePreparedStatement(sql, [data.timestamp, data.value, data.device_id]);
+        let resultPromises: Promise<QueryResult>[] = [];
+        for (let i = 0; i < data.length; i++) {
+            resultPromises.push(this.executePreparedStatement(sql, [data[i].timestamp, data[i].value, data[i].device_id]));
+        }
+        return await Promise.all(resultPromises);
     }
 
     async insertBloodOxygenData(data: any) {
         let sql = `INSERT INTO BloodOxygen (timestamp, value, device_id) VALUES (?,?,?)`;
-        return await this.executePreparedStatement(sql, [data.timestamp, data.value, data.device_id]);
+        let resultPromises: Promise<QueryResult>[] = [];
+        for (let i = 0; i < data.length; i++) {
+            console.log(data[i])
+            resultPromises.push(this.executePreparedStatement(sql, [data[i].timestamp, data[i].value, data[i].device_id]));
+        }
+        return await Promise.all(resultPromises);
     }
 
     async insertFallEventData(data: any) {
         let sql = `INSERT INTO FallEvents (timestamp, event_type, device_id) VALUES (?,?,?)`;
-        return await this.executePreparedStatement(sql, [data.timestamp, data.event_type, data.device_id]);
+        let resultPromises: Promise<QueryResult>[] = [];
+        for (let i = 0; i < data.length; i++) {
+            resultPromises.push(this.executePreparedStatement(sql, [data[i].timestamp, data[i].event_type, data[i].device_id]));
+        }
+        return await Promise.all(resultPromises);
     }
 
     async insertNotification(data: any) {
         let sql = `INSERT INTO notification (timestamp, message, device_id) VALUES (?,?,?)`;
-        return await this.executePreparedStatement(sql, [data.timestamp, data.message, data.device_id]);
+        let resultPromises: Promise<QueryResult>[] = [];
+        for (let i = 0; i < data.length; i++) {
+            resultPromises.push(this.executePreparedStatement(sql, [data[i].timestamp, data[i].message, data[i].device_id]));
+        }
+        return await Promise.all(resultPromises);
     }
 
 

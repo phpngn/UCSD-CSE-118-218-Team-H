@@ -9,9 +9,15 @@ app.use(express.json());
 const port:string | undefined = process.env.PORT || '3000';
 const db = new DB();
 
+
+app.get('/', (req: Request, res: Response) => {
+    res.send('Ubiqui.care API');
+});
+
 app.get('/api/schema', async (req: Request, res: Response) => {
+    console.log("Initializing schema")
     await db.initSchema();
-    res.send('');
+    res.send('Ok');
 });
 
 app.post('/api/heartrate', (req: Request, res: Response) => {
