@@ -48,7 +48,7 @@ export default class DB {
         let sql = `INSERT INTO HeartRate (timestamp, value, device_id) VALUES (?,?,?)`;
         let resultPromises: Promise<QueryResult>[] = [];
         for (let i = 0; i < data.values.length; i++) {
-            resultPromises.push(this.executePreparedStatement(sql, [data.values[i].timestamp, data.values[i].value, data.values[i].device_id]));
+            resultPromises.push(this.executePreparedStatement(sql, [data.measurements[i].timestamp, data.measurements[i].value, data.device_id]));
         }
         return await Promise.all(resultPromises);
     }
@@ -58,7 +58,7 @@ export default class DB {
         let resultPromises: Promise<QueryResult>[] = [];
         for (let i = 0; i < data.length; i++) {
             console.log(data[i])
-            resultPromises.push(this.executePreparedStatement(sql, [data.values[i].timestamp, data.values[i].value, data.values[i].device_id]));
+            resultPromises.push(this.executePreparedStatement(sql, [data.measurements[i].timestamp, data.measurements[i].value, data.device_id]));
         }
         return await Promise.all(resultPromises);
     }
@@ -81,6 +81,6 @@ export default class DB {
         return await Promise.all(resultPromises);
     }
 
-    
+
 
 }

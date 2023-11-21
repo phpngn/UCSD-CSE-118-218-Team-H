@@ -20,7 +20,7 @@ app.get('/api/schema', async (req: Request, res: Response) => {
     res.send('Ok');
 });
 
-app.post('/api/measurement', (req: Request, res: Response) => {
+app.post('/api/event', (req: Request, res: Response) => {
     switch(req.body.sensor) {
         case 'heartrate':
             db.insertHeartRateData(req.body);
@@ -37,41 +37,6 @@ app.post('/api/measurement', (req: Request, res: Response) => {
     }
     
     res.send('Ok');
-});
-
-app.post('/api/heartrate', (req: Request, res: Response) => {
-    db.insertHeartRateData(req.body);
-    res.send('Express + TypeScript Server');
-});
-
-app.post('/api/bloodoxygen', (req: Request, res: Response) => {
-    db.insertBloodOxygenData(req.body);
-    res.send('Ok');
-});
-
-app.post('/api/falldetection', (req: Request, res: Response) => {
-    db.insertFallEventData(req.body);
-    res.send('Ok');
-});
-
-app.get('/api/heartrate', (req: Request, res: Response) => {
-    res.send('TODO');
-});
-
-app.get('/api/bloodoxygen', (req: Request, res: Response) => {
-    res.send('TODO');
-});
-
-app.get('/api/falldetection', (req: Request, res: Response) => {
-    res.send('TODO');
-});
-
-app.get('/api/notification', (req: Request, res: Response) => {
-    res.send('TODO');
-});
-
-app.post('/api/notification', (req: Request, res: Response) => {
-    res.send('TODO');
 });
 
 app.listen(port, () => {
