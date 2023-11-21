@@ -8,36 +8,42 @@ const app: Express = express();
 const port:string | undefined = process.env.PORT;
 const db = new DB();
 
-app.get('/', async (req: Request, res: Response) => {
+app.get('/api/schema', async (req: Request, res: Response) => {
     await db.initSchema();
-    res.send('Nö');
+    res.send('');
 });
 
-app.post('/data/add/heartrate', (req: Request, res: Response) => {
+app.post('/api/heartrate', (req: Request, res: Response) => {
     res.send('Express + TypeScript Server');
 });
 
-app.post('/data/add/bloodoxygen', (req: Request, res: Response) => {
+app.post('/api/bloodoxygen', (req: Request, res: Response) => {
     res.send('a');
 });
 
-app.post('/data/add/falldetection', (req: Request, res: Response) => {
+app.post('/api/falldetection', (req: Request, res: Response) => {
     res.send('ad');
 });
 
-app.get('/data/retrieve/heartrate', (req: Request, res: Response) => {
+app.get('/api/heartrate', (req: Request, res: Response) => {
     res.send('adri');
 });
 
-app.get('/data/retrieve/bloodoxygen', (req: Request, res: Response) => {
+app.get('/api/bloodoxygen', (req: Request, res: Response) => {
     res.send('adria');
 });
 
-app.get('/data/retrieve/falldetection', (req: Request, res: Response) => {
+app.get('/api/falldetection', (req: Request, res: Response) => {
     res.send('adrian');
 });
 
+app.get('/api/notification', (req: Request, res: Response) => {
+    res.send('TODO notification');
+});
 
+app.post('/api/notification', (req: Request, res: Response) => {
+    res.send('TODO notification');
+});
 
 
 app.listen(port, () => {

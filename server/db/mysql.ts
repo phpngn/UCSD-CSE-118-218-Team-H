@@ -49,4 +49,26 @@ export default class DB {
             return res;
         }
     }
+
+    async insertHeartRateData(data:any) {
+        let sql = `INSERT INTO heartrate (timestamp, heartrate) VALUES (?,?)`;
+        return await this.executePreparedStatement(sql,[data.timestamp,data.heartrate]);
+    }
+
+    async insertBloodOxygenData(data:any) {
+        let sql = `INSERT INTO bloodoxygen (timestamp, bloodoxygen) VALUES (?,?)`;
+        return await this.executePreparedStatement(sql,[data.timestamp,data.bloodoxygen]);
+    }
+
+    async insertFallEventData(data:any) {
+        let sql = `INSERT INTO falldetection (timestamp, fall) VALUES (?,?)`;
+        return await this.executePreparedStatement(sql,[data.timestamp,data.fall]);
+    }
+
+    async insertNotification(data:any) {
+        let sql = `INSERT INTO notification (timestamp, message) VALUES (?,?)`;
+        return await this.executePreparedStatement(sql,[data.timestamp,data.message]);
+    }
+
+        
 }
