@@ -6,9 +6,8 @@ dotenv.config();
 
 
 export type QueryResult = {
-    success:boolean,
-    rows:object[],
-    fields:object[]
+    rows: object[],
+    fields: object[]
 }
 export default class DB {
     connection: mysql.Connection | undefined = undefined;
@@ -26,49 +25,43 @@ export default class DB {
 
     async initSchema() {
         const schema = fs.readFileSync("./db/schema.sql", 'utf8');
-        const statements:string[] = schema.split(";");
+        const statements: string[] = schema.split(";");
         return await this.executeMultiple(statements)
     }
 
-    async executeMultiple(queries:string[],params:any[][] = []) {
-        let res:QueryResult[] = [];
-        for(let i =0; i < queries.length; i++){
-            res.push(await this.executePreparedStatement(queries[i],params[i]));
+    async executeMultiple(queries: string[], params: any[][] = []) {
+        let res: QueryResult[] = [];
+        for (let i = 0; i < queries.length; i++) {
+            res.push(await this.executePreparedStatement(queries[i], params[i]));
         }
         return res;
     }
 
-    async executePreparedStatement(sql:string, params:any[] = []) {
-        try {
-            let [rows, fields]:any = await this.connection?.execute(sql,params)
-            let res:QueryResult = {success:true,rows:rows, fields:fields};
-            return res;
-        } catch (error) {
-            console.error(error);
-            let res:QueryResult = {success:false, rows:[], fields:[]};
-            return res;
-        }
+    async executePreparedStatement(sql: string, params: any[] = []) {
+        let [rows, fields]: any = await this.connection?.execute(sql, params)
+        let res: QueryResult = { rows: rows, fields: fields };
+        return res;
     }
 
-    async insertHeartRateData(data:any) {
-        let sql = `INSERT INTO heartrate (timestamp, heartrate) VALUES (?,?)`;
-        return await this.executePreparedStatement(sql,[data.timestamp,data.heartrate]);
+    async insertHeartRateData(data: any) {
+        let sql = `INSERT INTO HeartRate (timestamp, value, device_id) VALUES (?,?,?)`;
+        return await this.executePreparedStatement(sql, [data.timestamp, data.value, data.device_id]);
     }
 
-    async insertBloodOxygenData(data:any) {
-        let sql = `INSERT INTO bloodoxygen (timestamp, bloodoxygen) VALUES (?,?)`;
-        return await this.executePreparedStatement(sql,[data.timestamp,data.bloodoxygen]);
+    async insertBloodOxygenData(data: any) {
+        let sql = `INSERT INTO BloodOxygen (timestamp, value, device_id) VALUES (?,?,?)`;
+        return await this.executePreparedStatement(sql, [data.timestamp, data.value, data.device_id]);
     }
 
-    async insertFallEventData(data:any) {
-        let sql = `INSERT INTO falldetection (timestamp, fall) VALUES (?,?)`;
-        return await this.executePreparedStatement(sql,[data.timestamp,data.fall]);
+    async insertFallEventData(data: any) {
+        let sql = `INSERT INTO FallEvents (timestamp, event_type, device_id) VALUES (?,?,?)`;
+        return await this.executePreparedStatement(sql, [data.timestamp, data.event_type, data.device_id]);
     }
 
-    async insertNotification(data:any) {
-        let sql = `INSERT INTO notification (timestamp, message) VALUES (?,?)`;
-        return await this.executePreparedStatement(sql,[data.timestamp,data.message]);
+    async insertNotification(data: any) {
+        let sql = `INSERT INTO notification (timestamp, message, device_id) VALUES (?,?,?)`;
+        return await this.executePreparedStatement(sql, [data.timestamp, data.message, data.device_id]);
     }
 
-        
+
 }
