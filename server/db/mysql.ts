@@ -73,12 +73,14 @@ export default class DB {
     async insertDevices(device: Device) {
         let sql = `INSERT INTO Devices (serial, name) VALUES (?,?)`;
         return await this.executePreparedStatement(sql, [device.serial,device.name]);
+        //todo extract deviceid
     }
 
     async insertEvent(device: Event) {
         let sql = `INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)`;
         let result:any =  await this.executePreparedStatement(sql, [device.device_id,device.type,device.alert,device.timestamp]);
         return result.insertId;
+        //todo extract eventid
     }
 
     async insertDatapoints(datapoints: Datapoint[]) {
@@ -91,6 +93,7 @@ export default class DB {
             entries.params.push(params);
         }
         return await this.executeMultiple(entries.queries,entries.params);
+        //todo extract inserted datapoint entries/ids
     }
 
 
