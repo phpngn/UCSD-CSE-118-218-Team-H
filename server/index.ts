@@ -69,7 +69,7 @@ app.post('/api/event', async (req: Request, res: Response) => {
         timestamp: requestObj.timestamp
     };
     let insertEventResult = await db.insertEvent(newEvent);
-
+    //todo extract eventid
     let dps:Datapoint[] = [];
     for(let i = 0; i < requestObj.datapoints.length; i++) {
         let datapoint:RequestDatapoint = requestObj.datapoints[i];
@@ -81,7 +81,7 @@ app.post('/api/event', async (req: Request, res: Response) => {
         dps.push(newDatapoint);
     }
     let insertDPsResult = await db.insertDatapoints(dps);
-
+    //todo check if insert successful otherwise return error
     res.send('Ok');
 });
 
