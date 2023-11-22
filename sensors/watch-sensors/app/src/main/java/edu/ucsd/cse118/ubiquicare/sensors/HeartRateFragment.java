@@ -15,6 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.ucsd.cse118.ubiquicare.communication.HealthValuesConnector;
 import edu.ucsd.cse118.ubiquicare.databinding.FragmentHeartrateBinding;
 
 public class HeartRateFragment extends Fragment implements SensorEventListener {
@@ -22,13 +26,10 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mHeartRate;
     private String heartRateVal;
-    Context mContext;
+    private List<Float> heartRates;
 
-    /*@Override
-   public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        Log.d("heartbeat", "sensor created!");
-    }*/
+    private HealthValuesConnector healthValuesConnector;
+    Context mContext;
 
     public HeartRateFragment(Context mContext) {
         this.mContext = mContext;
@@ -36,8 +37,10 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
 
         mSensorManager = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
         mHeartRate = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
-        //ActivityCompat.requestPermissions(HeartRate.this, new String[] {Manifest.permission.BODY_SENSORS},123);
 
+        healthValuesConnector = new HealthValuesConnector();
+
+        heartRates = new ArrayList<>();
     }
 
     @Override
@@ -53,7 +56,6 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
         binding.textView3.setText("new heart rate");
-        //EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
     }
 
 
@@ -75,5 +77,13 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
         Log.d("heartrate", Float.toString((event.values[0])));
         heartRateVal = Float.toString((event.values[0]));
         binding.textView3.setText("Heart Rate: " + heartRateVal);
+
+        heartRates.add(event.values[0]);
+        if (heartRates.size() == 10) {
+            // send to server
+            Log.d("10 heartrates", "onSensorChanged: " + heartRates.toString());
+            healthValuesConnector.sendHeartRateValues(heartRates);
+            heartRates.clear();
+        }
     }
 }
