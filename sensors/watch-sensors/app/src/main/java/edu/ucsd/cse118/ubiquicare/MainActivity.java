@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import edu.ucsd.cse118.ubiquicare.databinding.ActivityMainBinding;
+import edu.ucsd.cse118.ubiquicare.sensors.FallDetectionFragment;
 import edu.ucsd.cse118.ubiquicare.sensors.HeartRateFragment;
 
 public class MainActivity extends FragmentActivity {
@@ -33,6 +34,7 @@ public class MainActivity extends FragmentActivity {
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.your_placeholder, new HeartRateFragment(this));
+        ft.replace(R.id.your_placeholder_2,new FallDetectionFragment(this));
         ft.commit();
     }
 }

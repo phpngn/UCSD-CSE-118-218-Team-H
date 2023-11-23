@@ -17,7 +17,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
             android:padding="@dimen/inner_frame_layout_padding"
             app:layout_boxedEdges="all">
 
@@ -29,12 +29,21 @@
 
 
         </FrameLayout>
+
         <FrameLayout
             android:id="@+id/your_placeholder"
             android:layout_width="match_parent"
-            android:layout_height="83dp">
+            android:layout_height="41dp">
 
         </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/your_placeholder_2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+        </FrameLayout>
+
 
     </LinearLayout>
 
