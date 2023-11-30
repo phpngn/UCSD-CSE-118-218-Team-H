@@ -104,8 +104,7 @@ async function getAverage(req:any,res:any,field:string) {
     if (isNaN(minuteCount) || minuteCount <= 0) {
         infinite = true;
     }
-
-    let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '"+field+"' AND e.type = '"+field+"';";
+    let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '"+field+"' AND e.type = '"+field+"'";
     query = infinite ? query : query + " AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
     const [rows]:any = await db.executePreparedStatement(query, [minuteCount]);
     if(rows !== undefined && rows.length >= 0 && rows[0].average !== null) {
