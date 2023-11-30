@@ -93,6 +93,48 @@ app.post('/api/event', async (req: Request, res: Response) => {
     res.send('{"message": "ok"}');
 });
 
+async function getAverage(req:any,res:any,field:string) {
+    let mc = req.query.minuteCount;
+    let minuteCount = 0;
+    if (mc !== undefined && typeof mc === "string") {
+        minuteCount = parseInt(mc, 10);
+    }
+
+    let infinite = false;
+    if (isNaN(minuteCount) || minuteCount <= 0) {
+        infinite = true;
+    }
+
+    let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '"+field+"' AND e.type = '"+field+"';";
+    query = infinite ? query : query + " AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+    const [rows, fields]:any = await db.executePreparedStatement(query, [minuteCount]);
+    if(rows !== undefined && rows.length >= 0 && rows[0].average !== null) {
+        res.send('{"message": "ok", "average": ' + rows[0].average + '}');
+    }
+    else{
+        res.send('{"message": "notfound"}');
+    }
+}
+
+app.get('/api/summary/heartrate/average/', async (req: Request, res: Response) => {
+    await getAverage(req,res,"heartrate");
+});
+
+app.get('/api/summary/bloodoxygen/average', async (req: Request, res: Response) => {
+    await getAverage(req,res,"bloodoxygen");
+});
+
+app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
+    let query = "SELECT * FROM Events e WHERE e.type = 'fall' ORDER BY e.timestamp DESC LIMIT 1";
+    const [rows, fields]:any = await db.executePreparedStatement(query);
+    if(rows !== undefined && rows.length >= 0) {
+        res.send('{"message": "ok", "last": ' + JSON.stringify(rows[0]) + '}');
+    }
+    else{
+        res.send('{"message": "notfound"}');
+    }
+});
+
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
