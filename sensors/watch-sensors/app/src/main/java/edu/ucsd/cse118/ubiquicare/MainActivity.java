@@ -3,6 +3,7 @@ package edu.ucsd.cse118.ubiquicare;
 import static com.google.android.gms.common.util.CollectionUtils.listOf;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.Manifest;
 
@@ -23,7 +24,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.BODY_SENSORS},123);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         /*Intent intent = new Intent(MainActivity.this, HeartRate.class);
         startActivity(intent);*/
 

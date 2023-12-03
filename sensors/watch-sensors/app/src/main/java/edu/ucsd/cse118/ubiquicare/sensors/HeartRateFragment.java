@@ -74,14 +74,12 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
 
     public void onSensorChanged(SensorEvent event) {
         System.out.println(event.values[0]);
-        Log.d("heartrate", Float.toString((event.values[0])));
         heartRateVal = Float.toString((event.values[0]));
         binding.textView3.setText("Heart Rate: " + heartRateVal);
 
         heartRates.add(event.values[0]);
         if (heartRates.size() == 10) {
             // send to server
-            Log.d("10 heartrates", "onSensorChanged: " + heartRates.toString());
             healthValuesConnector.sendHeartRateValues(heartRates);
             heartRates.clear();
         }

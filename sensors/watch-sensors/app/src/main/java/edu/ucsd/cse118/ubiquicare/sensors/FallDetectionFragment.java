@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.ucsd.cse118.ubiquicare.communication.HealthValuesConnector;
 import edu.ucsd.cse118.ubiquicare.databinding.FragmentFalldetectionBinding;
@@ -24,8 +26,13 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
     private final Context mContext;
     private SensorManager mSensorManager;
     private Sensor mAcceleration;
+    private Sensor mGyroscope;
 
     private float yAcceleration;
+    private float zAcceleration;
+    private float xAcceleration;
+
+    private float numberUpdates = 0;
 
     public FallDetectionFragment (Context mContext) {
         this.mContext = mContext;
@@ -45,11 +52,17 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
     }
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d("movement", Float.toString((sensorEvent.values[SensorManager.DATA_Y])));
+        Sensor source = sensorEvent.sensor;
+        numberUpdates++;
         yAcceleration = sensorEvent.values[SensorManager.DATA_Y];
-        if (yAcceleration < -10){
-            binding.textView4.setText(Float.toString(yAcceleration) + "FALLEN");
-        }
+        xAcceleration = sensorEvent.values[SensorManager.DATA_X];
+        zAcceleration = sensorEvent.values[SensorManager.DATA_Z];
+        Log.d("movement", Float.toString(xAcceleration) +", " + Float.toString(yAcceleration) +", " + Float.toString(zAcceleration));
+
+            if (yAcceleration < -10) {
+                binding.textView4.setText(Float.toString(yAcceleration) + "FALLEN");
+            }
+            binding.textView5.setText(Float.toString(numberUpdates));
     }
 
     @Override
@@ -66,4 +79,8 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         View view = binding.getRoot();
         return view;
     }
+
+
+
+
 }
