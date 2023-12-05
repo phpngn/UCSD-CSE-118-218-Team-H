@@ -17,7 +17,6 @@ import edu.ucsd.cse118.ubiquicare.sensors.HeartRateFragment;
 
 public class MainActivity extends FragmentActivity {
 
-    private TextView mTextView;
     private ActivityMainBinding binding;
 
     @Override
@@ -31,7 +30,6 @@ public class MainActivity extends FragmentActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mTextView = binding.text;
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.your_placeholder, new HeartRateFragment(this));

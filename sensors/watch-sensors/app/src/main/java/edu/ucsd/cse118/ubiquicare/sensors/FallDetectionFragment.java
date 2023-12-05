@@ -10,11 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.ucsd.cse118.ubiquicare.communication.HealthValuesConnector;
@@ -31,6 +33,12 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
     private float yAcceleration;
     private float zAcceleration;
     private float xAcceleration;
+    private double totalAcceleration;
+    private boolean fallChanceFlag = false;
+    private boolean fell = false;
+
+    private double[] data = {9,9,9,9,9,9};
+    private int index = 0;
 
     private float numberUpdates = 0;
 
@@ -39,8 +47,12 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         Log.d("fall detection", "sensor created!");
 
         mSensorManager = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
-        mAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        mAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
     }
+
+
     public void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mAcceleration, SensorManager.SENSOR_DELAY_NORMAL);
@@ -57,12 +69,54 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         yAcceleration = sensorEvent.values[SensorManager.DATA_Y];
         xAcceleration = sensorEvent.values[SensorManager.DATA_X];
         zAcceleration = sensorEvent.values[SensorManager.DATA_Z];
-        Log.d("movement", Float.toString(xAcceleration) +", " + Float.toString(yAcceleration) +", " + Float.toString(zAcceleration));
+        //Log.d("movement", Float.toString(xAcceleration) +", " + Float.toString(yAcceleration) +", " + Float.toString(zAcceleration));
+        totalAcceleration = Math.sqrt(xAcceleration*xAcceleration + yAcceleration*yAcceleration + zAcceleration*zAcceleration);
+        System.out.println(Arrays.toString(data));
+        for(int i = 0; i < data.length-1; i++ ){
+            data[i] = data[i+1];
+        }
+        data[data.length-1] = totalAcceleration;
 
-            if (yAcceleration < -10) {
-                binding.textView4.setText(Float.toString(yAcceleration) + "FALLEN");
+
+            if(fallChanceFlag){
+                index--;
+                for(int i = index; i <= data.length-1; i++){
+                    if(index == data.length-2 && i == data.length-1){
+                        if(data[i] < 5.9 || data[i] > 10){
+                            return;
+                        }
+                        else{
+                            fallChanceFlag = false;
+                        }
+                    }
+                    if(index == data.length-3 && i == data.length-1){
+                        if(data[i-1] <  5.9 && data[i] > 10){
+                            return;
+                        }
+                        if(data[i-1] > 15){
+                            return;
+                        }
+                        else {
+                            fallChanceFlag = false;
+                        }
+                    }
+                    if(index == data.length-4 && i == data.length-1){
+                        if(data[i]>7 && data[i]<11){
+                            fell = true;
+                            binding.textView5.setText("you fell");
+                            fallChanceFlag = false;
+                        }
+                    }
+                }
             }
-            binding.textView5.setText(Float.toString(numberUpdates));
+
+            if (totalAcceleration < 5.9) {
+                fallChanceFlag = true;
+                index = data.length-1;
+                binding.textView4.setText("possible fall");
+                return;
+            }
+
     }
 
     @Override

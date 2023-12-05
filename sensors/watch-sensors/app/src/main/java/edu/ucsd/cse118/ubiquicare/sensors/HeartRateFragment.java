@@ -73,7 +73,7 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event) {
-        System.out.println(event.values[0]);
+        //System.out.println(event.values[0]);
         heartRateVal = Float.toString((event.values[0]));
         binding.textView3.setText("Heart Rate: " + heartRateVal);
 
