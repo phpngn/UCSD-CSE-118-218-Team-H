@@ -99,6 +99,7 @@ export default class DB {
     async getAverage(field: string, minuteCount: number, infinite: boolean) {
         let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '" + field + "' AND e.type = '" + field + "'";
         query = infinite ? query : query + " AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+        console.log(query)
         const [rows]: any = await this.executePreparedStatement(query, [minuteCount]);
         return rows;
     }
@@ -112,6 +113,30 @@ export default class DB {
     async getLastFall() {
         let query = "SELECT * FROM Events e WHERE e.type = 'fall' ORDER BY e.timestamp DESC LIMIT 1";
         const [rows]: any = await this.executePreparedStatement(query);
+        return rows
+    }
+
+    async getNotifications(device_id: string) {
+        let query = "SELECT * FROM Events e WHERE e.device_id = ? AND read = false AND checked = false ORDER BY e.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [device_id]);
+        return rows
+    }
+
+    async markNotificationAsRead(notification_id: string) {
+        let query = "UPDATE Events SET read = true WHERE id = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [notification_id]);
+        return rows
+    }
+
+    async markNotificationAsChecked(notification_id: string) {
+        let query = "UPDATE Events SET checked = true WHERE id = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [notification_id]);
+        return rows
+    }
+
+    async insertNotification(device_id: string, type: string, alert: boolean, timestamp: string) {
+        let query = "INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)";
+        const [rows]: any = await this.executePreparedStatement(query, [device_id, type, alert, timestamp]);
         return rows
     }
 }

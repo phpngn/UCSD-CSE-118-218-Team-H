@@ -84,6 +84,7 @@ const insertEventHandler = async (requestObj: EventRequest) => {
 }
 
 app.post('/api/event', async (req: Request, res: Response) => {
+    console.log("Received event")
     let promises = [];
     for (let i = 0; i < req.body.length; i++) {
         let requestObj = req.body[i];
@@ -93,8 +94,10 @@ app.post('/api/event', async (req: Request, res: Response) => {
     res.send('{"message": "ok"}');
 });
 
-async function getAverage(req: any, res: any, field: string) {
-    let mc = req.query.minuteCount;
+
+app.get('/api/summary/heartrate/average', async (req: Request, res: Response) => {
+    let mc = req.query.minutes; 
+    console.log(mc)
     let minuteCount = 0;
     if (mc !== undefined && typeof mc === "string") {
         minuteCount = parseInt(mc, 10);
@@ -104,37 +107,46 @@ async function getAverage(req: any, res: any, field: string) {
     if (isNaN(minuteCount) || minuteCount <= 0) {
         infinite = true;
     }
-    let rows = await db.getAverage(field, minuteCount, infinite);
+    let rows = await db.getAverage("heartrate", minuteCount, infinite);
     if (rows !== undefined && rows.length >= 0 && rows[0].average !== null) {
-        res.send({ "message": "ok", "average": + rows[0].average });
+        res.send({ "message": "ok", "value": + rows[0].average });
     }
     else {
         res.send({ "message": "notfound" });
     }
-}
-
-app.get('/api/summary/heartrate/average', async (req: Request, res: Response) => {
-    await getAverage(req, res, "heartrate");
 });
 
-app.get('/api/summary/bloodoxygen/average', async (req: Request, res: Response) => {
-    await getAverage(req, res, "bloodoxygen");
+app.get('/api/notification', async (req: Request, res: Response) => {
+    let rows = await db.getNotifications(req.query.id as string);
+});
+
+app.get('/api/notification/read', async (req: Request, res: Response) => {
+    let rows = await db.markNotificationAsRead(req.query.id as string);
+});
+
+app.get('/api/notification/check', async (req: Request, res: Response) => {
+    let rows = await db.markNotificationAsChecked(req.query.id as string);
+});
+
+app.post('/api/notification', async (req: Request, res: Response) => {
+
 });
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {
     let rows = await db.getCurrentHeartrate();
     if (rows !== undefined && rows.length >= 0) {
-        res.send({ "message": "ok", "last": rows[0] });
+        console.log(rows[0]);
+        res.send({ "message": "ok", "value": rows[0].value });
     }
 });
 
 app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
     let rows = await db.getLastFall();
     if (rows !== undefined && rows.length >= 0) {
-        res.send('{"message": "ok", "last": ' + JSON.stringify(rows[0]) + '}');
+        res.send({ "message": "ok", "last": rows[0].value });
     }
     else {
-        res.send('{"message": "notfound"}');
+        res.send({ "message": "notfound" });
     }
 });
 
