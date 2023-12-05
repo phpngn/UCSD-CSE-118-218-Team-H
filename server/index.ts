@@ -104,9 +104,7 @@ async function getAverage(req: any, res: any, field: string) {
     if (isNaN(minuteCount) || minuteCount <= 0) {
         infinite = true;
     }
-    let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '" + field + "' AND e.type = '" + field + "'";
-    query = infinite ? query : query + " AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
-    const [rows]: any = await db.executePreparedStatement(query, [minuteCount]);
+    let rows = await db.getAverage(field, minuteCount, infinite);
     if (rows !== undefined && rows.length >= 0 && rows[0].average !== null) {
         res.send({ "message": "ok", "average": + rows[0].average });
     }
@@ -124,16 +122,14 @@ app.get('/api/summary/bloodoxygen/average', async (req: Request, res: Response) 
 });
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {
-    let query = "SELECT value FROM Datapoints WHERE sensor = 'heartrate' ORDER BY id DESC LIMIT 1";
-    const [rows]: any = await db.executePreparedStatement(query);
+    let rows = await db.getCurrentHeartrate();
     if (rows !== undefined && rows.length >= 0) {
         res.send({ "message": "ok", "last": rows[0] });
     }
 });
 
 app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
-    let query = "SELECT * FROM Events e WHERE e.type = 'fall' ORDER BY e.timestamp DESC LIMIT 1";
-    const [rows]: any = await db.executePreparedStatement(query);
+    let rows = await db.getLastFall();
     if (rows !== undefined && rows.length >= 0) {
         res.send('{"message": "ok", "last": ' + JSON.stringify(rows[0]) + '}');
     }
