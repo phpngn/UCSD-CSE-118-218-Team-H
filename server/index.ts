@@ -121,15 +121,11 @@ app.get('/api/notification', async (req: Request, res: Response) => {
 });
 
 app.get('/api/notification/read', async (req: Request, res: Response) => {
-    let rows = await db.markNotificationAsRead(req.query.id as string);
-});
-
-app.get('/api/notification/check', async (req: Request, res: Response) => {
-    let rows = await db.markNotificationAsChecked(req.query.id as string);
+    let rows = await db.markNotificationAsRead(req.query.type as string);
 });
 
 app.post('/api/notification', async (req: Request, res: Response) => {
-
+    db.insertNotification(req.body.id as string, req.body.type as string, req.body.alert as boolean, req.body.timestamp as string);
 });
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {

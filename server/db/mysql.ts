@@ -122,15 +122,9 @@ export default class DB {
         return rows
     }
 
-    async markNotificationAsRead(notification_id: string) {
-        let query = "UPDATE Events SET read = true WHERE id = ?";
-        const [rows]: any = await this.executePreparedStatement(query, [notification_id]);
-        return rows
-    }
-
-    async markNotificationAsChecked(notification_id: string) {
-        let query = "UPDATE Events SET checked = true WHERE id = ?";
-        const [rows]: any = await this.executePreparedStatement(query, [notification_id]);
+    async markNotificationAsRead(type: string) {
+        let query = "UPDATE Events SET read = true WHERE type = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [type]);
         return rows
     }
 
