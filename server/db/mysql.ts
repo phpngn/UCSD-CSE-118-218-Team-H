@@ -68,7 +68,7 @@ export default class DB {
         return result.insertId;
     }
 
-    async insertEvent(device: Event) : Promise<number> {
+    async insertEvent(device: Event): Promise<number> {
         let sql = `INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)`;
         let result: any = await this.executePreparedStatement(sql, [device.device_id, device.type, device.alert, device.timestamp]);
         console.log(result)
@@ -94,5 +94,43 @@ export default class DB {
             return rows[0] as Device;
         }
         else return undefined;
+    }
+
+    async getAverage(field: string, minuteCount: number, infinite: boolean) {
+        let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '" + field + "' AND e.type = '" + field + "'";
+        query = infinite ? query : query + " AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+        console.log(query)
+        const [rows]: any = await this.executePreparedStatement(query, [minuteCount]);
+        return rows;
+    }
+
+    async getCurrentHeartrate() {
+        let query = "SELECT value FROM Datapoints WHERE sensor = 'heartrate' ORDER BY id DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query);
+        return rows
+    }
+
+    async getLastFall() {
+        let query = "SELECT * FROM Events e WHERE e.type = 'fall' ORDER BY e.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query);
+        return rows
+    }
+
+    async getNotifications(device_id: string) {
+        let query = "SELECT * FROM Events e WHERE e.device_id = ? AND read = false AND checked = false ORDER BY e.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [device_id]);
+        return rows
+    }
+
+    async markNotificationAsRead(type: string) {
+        let query = "UPDATE Events SET read = true WHERE type = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [type]);
+        return rows
+    }
+
+    async insertNotification(device_id: string, type: string, alert: boolean, timestamp: string) {
+        let query = "INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)";
+        const [rows]: any = await this.executePreparedStatement(query, [device_id, type, alert, timestamp]);
+        return rows
     }
 }
