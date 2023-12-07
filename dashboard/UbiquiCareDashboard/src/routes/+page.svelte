@@ -8,15 +8,6 @@
 	onMount(startAllSchedulers);
 </script>
 <style>
-	body {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-		overflow: hidden !important;
-	}
 
 	.hr span, .fall span {
 		display: block;
@@ -59,7 +50,7 @@
 		color: #3b3b3b;
 	}
 	.loaded {
-		background: #ffae00;
+		background: #252525;
 		color: #ffffff;
 	}
 </style>

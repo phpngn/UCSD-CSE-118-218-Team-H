@@ -55,7 +55,6 @@ export async function fetchCurrentIsFall() {
         }
 
         const data = await response.json();
-        console.log(data);
         isFall.set(data.message === 'ok');
     } catch (error) {}
     isFall.set(false);
