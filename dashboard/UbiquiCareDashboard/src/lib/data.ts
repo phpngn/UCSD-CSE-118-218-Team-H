@@ -29,6 +29,7 @@ export function startIsFallScheduler() {
 
 
 const backendHost = 'https://ubiqui-care.fly.dev/';
+
 export async function fetchCurrentHeartRate() {
     try {
         const response = await fetch(backendHost+'/api/heartrate');
