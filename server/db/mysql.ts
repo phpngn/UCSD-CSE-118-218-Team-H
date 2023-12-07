@@ -124,14 +124,14 @@ export default class DB {
     }
 
     async markNotificationAsRead(type: string) {
-        let query = "UPDATE Events SET read = true WHERE type = ?";
+        let query = "UPDATE Events SET checked = true WHERE type = ?";
         const [rows]: any = await this.executePreparedStatement(query, [type]);
         return rows
     }
 
-    async insertNotification(device_id: string, type: string, alert: boolean, timestamp: string) {
-        let query = "INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)";
-        const [rows]: any = await this.executePreparedStatement(query, [device_id, type, alert, timestamp]);
+    async insertNotification(device_id: string, title: string, message: string, timestamp: string) {
+        let query = "INSERT INTO Events (device_id, title message, checked, timestamp) VALUES (?,?,?,?)";
+        const [rows]: any = await this.executePreparedStatement(query, [device_id, title, message, false, timestamp]);
         return rows
     }
 }

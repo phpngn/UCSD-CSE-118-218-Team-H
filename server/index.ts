@@ -127,7 +127,7 @@ app.get('/api/notification/read', async (req: Request, res: Response) => {
 });
 
 app.post('/api/notification', async (req: Request, res: Response) => {
-    db.insertNotification(req.body.id as string, req.body.type as string, req.body.alert as boolean, req.body.timestamp as string);
+    await db.insertNotification(req.body.id as string, req.body.title as string, req.body.message as string, req.body.timestamp as string);
 });
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {
