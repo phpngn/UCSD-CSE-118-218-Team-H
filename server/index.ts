@@ -140,7 +140,7 @@ app.get('/api/heartrate', async (req: Request, res: Response) => {
 
 app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
     let rows = await db.getLastFall();
-    if (rows !== undefined && rows.length >= 0) {
+    if (rows !== undefined && rows.length > 0) {
         res.send({ "message": "ok", "last": rows[0].value });
     }
     else {

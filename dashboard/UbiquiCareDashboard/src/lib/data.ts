@@ -16,7 +16,6 @@ export function startAllSchedulers() {
 export function startHeartRateScheduler() {
     fetchCurrentHeartRate();
     return setInterval(async () => {
-        console.log("Fetching Heartrate...");
         await fetchCurrentHeartRate();
     }, executeSecondsHeartRate * 1000);
 }
@@ -24,7 +23,6 @@ export function startHeartRateScheduler() {
 export function startIsFallScheduler() {
     fetchCurrentIsFall();
     return setInterval(async () => {
-        console.log("Fetching fall status...");
         await fetchCurrentIsFall();
     }, executeSecondsIsFall * 1000);
 }
@@ -41,7 +39,7 @@ export async function fetchCurrentHeartRate() {
 
         const data = await response.json();
         if (data.message === 'ok') {
-            currentHeartRate.set(data.last);
+            currentHeartRate.set(data.value);
             return;
         }
     } catch (error) {}
@@ -49,5 +47,16 @@ export async function fetchCurrentHeartRate() {
 }
 
 export async function fetchCurrentIsFall() {
+    try {
+        const response = await fetch(backendHost+'/api/summary/fall/last');
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+
+        const data = await response.json();
+        console.log(data);
+        isFall.set(data.message === 'ok');
+    } catch (error) {}
     isFall.set(false);
 }

@@ -111,8 +111,9 @@ export default class DB {
     }
 
     async getLastFall() {
-        let query = "SELECT * FROM Events e WHERE e.type = 'fall' ORDER BY e.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query);
+        let maxSeconds = 20;
+        let query = "SELECT * FROM Events e WHERE e.type = 'fall' AND e.timestamp >= NOW() - INTERVAL ? SECOND ORDER BY e.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query,[maxSeconds]);
         return rows
     }
 
