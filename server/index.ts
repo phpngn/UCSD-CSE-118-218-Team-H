@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import DB, { Datapoint, Device } from './db/mysql';
 import { type Event } from "./db/mysql";
+import cors from 'cors';
 
 export enum EventType {
     Heartrate = "heartrate",
@@ -37,6 +38,7 @@ dotenv.config();
 
 const app: Express = express();
 app.use(express.json());
+app.use(cors());
 const port: string | undefined = process.env.PORT || '3000';
 const db = new DB();
 
