@@ -81,7 +81,6 @@ const insertEventHandler = async (requestObj: EventRequest) => {
         }
         dps.push(newDatapoint);
     }
-    //TODO check if insert successful otherwise return error
     let insertDPsResult = await db.insertDatapoints(dps);
 }
 
@@ -121,10 +120,10 @@ app.get('/api/summary/heartrate/average', async (req: Request, res: Response) =>
 app.get('/api/notifications', async (req: Request, res: Response) => {
     let rows = await db.getNotifications();
     if (rows !== undefined && rows.length > 0) {
-        return res.send({ "message": "ok", "value": rows });
+        return res.send(rows);
     }
     else {
-        return res.send({ "message": "notfound" });
+        return res.send([]);
     }
 
 });
