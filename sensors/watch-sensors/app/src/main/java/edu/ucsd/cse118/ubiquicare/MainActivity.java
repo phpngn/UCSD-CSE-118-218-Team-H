@@ -11,20 +11,19 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import edu.ucsd.cse118.ubiquicare.databinding.ActivityMainBinding;
+import edu.ucsd.cse118.ubiquicare.reminders.RemindersFetcher;
 import edu.ucsd.cse118.ubiquicare.sensors.HeartRateFragment;
 
 public class MainActivity extends FragmentActivity {
 
     private TextView mTextView;
     private ActivityMainBinding binding;
+    private RemindersFetcher remindersFetcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.BODY_SENSORS},123);
-
-        /*Intent intent = new Intent(MainActivity.this, HeartRate.class);
-        startActivity(intent);*/
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -34,5 +33,20 @@ public class MainActivity extends FragmentActivity {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.your_placeholder, new HeartRateFragment(this));
         ft.commit();
+
+        remindersFetcher = new RemindersFetcher();
+        remindersFetcher.startFetchingReminders();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        remindersFetcher.stopFetchingReminders();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        remindersFetcher.startFetchingReminders();
     }
 }
