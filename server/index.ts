@@ -182,6 +182,24 @@ app.get('/api/summary/bloodoxygen/maximum', async (req: Request, res: Response) 
     }
 });
 
+app.delete('/api/notifications', async (req: Request, res: Response) => {
+    if (!db.isNotification(req.query.title as string)) {
+        return res.status(400).send("Not found");
+    }
+    let rows = await db.deleteNotification(req.query.title as string);
+    return res.send("Ok");
+});
+
+app.get('/api/notifications/all', async (req: Request, res: Response) => {
+    let rows = await db.getAllNotifications();
+    if (rows !== undefined && rows.length > 0) {
+        return res.send(rows);
+    }
+    else {
+        return res.send([]);
+    }
+});
+
 app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
     let rows = await db.getLastFall();
     console.log(rows);

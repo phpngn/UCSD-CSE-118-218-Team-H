@@ -144,8 +144,26 @@ export default class DB {
 
     async getEmergency() {
         let maxSeconds = 20;
-        let query = "SELECT value FROM Events WHERE sensor = 'emergency' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY id DESC LIMIT 1";
+        let query = "SELECT * FROM Events WHERE type = 'emergency' AND timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) AND alert = true ORDER BY id DESC LIMIT 1";
         const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
+        return rows
+    }
+
+    async isNotification(title: string) {
+        let query = "SELECT * FROM Notifications WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [title]);
+        return rows
+    }
+
+    async deleteNotification(title: string) {
+        let query = "DELETE FROM Notifications WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [title]);
+        return rows
+    }
+
+    async getAllNotifications() {
+        let query = "SELECT * FROM Notifications WHERE timestamp >= now() ORDER BY timestamp DESC";
+        const [rows]: any = await this.executePreparedStatement(query);
         return rows
     }
 }
