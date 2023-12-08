@@ -136,6 +136,11 @@ export default class DB {
         const [rows]: any = await this.executePreparedStatement(query, [title, timestamp]);
         console.log("inserted: ", rows)
         return rows
+    }
 
+    async getEmergency() {
+        let query = "SELECT value FROM Events WHERE sensor = 'emergency' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY id DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query);
+        return rows
     }
 }

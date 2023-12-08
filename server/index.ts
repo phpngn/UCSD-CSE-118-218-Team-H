@@ -148,14 +148,24 @@ app.get('/api/heartrate', async (req: Request, res: Response) => {
     return res.send("Everything went wrong");
 });
 
+app.get('/api/emergency', async (req: Request, res: Response) => {
+    let rows = await db.getEmergency();
+    if (rows !== undefined && rows.length >= 0) {
+        console.log(rows[0]);
+        return res.send({ "message": "ok", "value": rows[0].value });
+    } else {
+        return res.send({ "message": "notfound" });
+    }
+});
+
 app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
     let rows = await db.getLastFall();
     console.log(rows);
     if (rows !== undefined && rows.length > 0) {
-        res.send({ "message": "ok", "last": rows[0].value });
+        return res.send({ "message": "ok", "last": rows[0].value });
     }
     else {
-        res.send({ "message": "notfound" });
+        return res.send({ "message": "notfound" });
     }
 });
 
