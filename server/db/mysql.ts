@@ -24,8 +24,6 @@ export type Datapoint = {
 }
 
 
-
-
 dotenv.config();
 
 export default class DB {
@@ -104,6 +102,12 @@ export default class DB {
         return rows;
     }
 
+    async getMaximum(seconds: number) {
+        let query = "SELECT MAX(d.value) AS maximum FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = 'heartrate' AND e.type = 'heartrate' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND)";
+        const [rows]: any = await this.executePreparedStatement(query, [seconds]);
+        return rows;
+    }
+
     async getCurrentHeartrate() {
         let query = "SELECT value FROM Datapoints WHERE sensor = 'heartrate' ORDER BY id DESC LIMIT 1";
         const [rows]: any = await this.executePreparedStatement(query);
@@ -139,8 +143,9 @@ export default class DB {
     }
 
     async getEmergency() {
+        let maxSeconds = 20;
         let query = "SELECT value FROM Events WHERE sensor = 'emergency' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY id DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query);
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
         return rows
     }
 }

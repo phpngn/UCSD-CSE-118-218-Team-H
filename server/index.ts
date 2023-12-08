@@ -34,10 +34,20 @@ export type EventRequest = {
     datapoints: RequestDatapoint[]
 }
 
+const requestLoggerMiddleware = (req: Request, res: Response, next: Function) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    if (req.body !== undefined) {
+        console.log(JSON.stringify(req.body));
+    }
+    next(); // Call the next middleware in the stack
+};
+
+
 dotenv.config();
 
 const app: Express = express();
 app.use(express.json());
+app.use(requestLoggerMiddleware);
 app.use(cors());
 const port: string | undefined = process.env.PORT || '3000';
 const db = new DB();
@@ -140,7 +150,7 @@ app.post('/api/notifications', async (req: Request, res: Response) => {
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {
     let rows = await db.getCurrentHeartrate();
-    if (rows !== undefined && rows.length >= 0) {
+    if (rows !== undefined && rows.length > 0) {
         console.log(rows[0]);
         return res.send({ "message": "ok", "value": rows[0].value });
     }
@@ -149,10 +159,25 @@ app.get('/api/heartrate', async (req: Request, res: Response) => {
 
 app.get('/api/emergency', async (req: Request, res: Response) => {
     let rows = await db.getEmergency();
-    if (rows !== undefined && rows.length >= 0) {
+    if (rows !== undefined && rows.length > 0) {
         console.log(rows[0]);
         return res.send({ "message": "ok", "value": rows[0].value });
     } else {
+        return res.send({ "message": "notfound" });
+    }
+});
+
+app.get('/api/summary/bloodoxygen/maximum', async (req: Request, res: Response) => {
+    let seconds = req.query.seconds;
+    let maxSeconds = 20;
+    if (seconds !== undefined && typeof seconds === "string") {
+        maxSeconds = parseInt(seconds, 10);
+    }
+    let rows = await db.getMaximum(maxSeconds);
+    if (rows !== undefined && rows.length >= 0 && rows[0].maximum !== null) {
+        return res.send({ "message": "ok", "value": + rows[0].maximum });
+    }
+    else {
         return res.send({ "message": "notfound" });
     }
 });
