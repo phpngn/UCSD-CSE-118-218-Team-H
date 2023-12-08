@@ -54,7 +54,6 @@ public class HeartRateFragment extends Fragment implements SensorEventListener {
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // Setup any handles to view objects here
         binding.textView3.setText("new heart rate");
     }
 

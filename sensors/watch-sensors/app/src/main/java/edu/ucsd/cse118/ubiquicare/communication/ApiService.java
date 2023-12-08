@@ -11,11 +11,5 @@ import retrofit2.http.POST;
 public interface ApiService {
     @POST("event")
     Call<String> reportHeartRate(@Body HealthDataReport heartRateReport);
-
-    @POST("bloodoxygen")
-    Call<ResponseStructure> reportBloodOxygen(@Body HealthDataReport bloodOxygenReport);
-
-    @POST("falldetection")
-    Call<Void> reportFallDetection(@Body List<Float> values);
 }
 

@@ -13,15 +13,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.beans.*;
 
+import edu.ucsd.cse118.ubiquicare.FallDetectionModel;
 import edu.ucsd.cse118.ubiquicare.communication.HealthValuesConnector;
 import edu.ucsd.cse118.ubiquicare.databinding.FragmentFalldetectionBinding;
 import edu.ucsd.cse118.ubiquicare.databinding.FragmentHeartrateBinding;
+
 
 public class FallDetectionFragment extends Fragment implements SensorEventListener {
     private FragmentFalldetectionBinding binding;
@@ -35,8 +41,8 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
     private float xAcceleration;
     private double totalAcceleration;
     private boolean fallChanceFlag = false;
-    private boolean fell = false;
 
+    private FallDetectionModel fallDetectionModel;
     private double[] data = {9,9,9,9,9,9};
     private int index = 0;
 
@@ -49,9 +55,15 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         mSensorManager = (SensorManager)mContext.getSystemService(Context.SENSOR_SERVICE);
         mAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        fallDetectionModel = new ViewModelProvider(requireActivity()).get(FallDetectionModel.class);
+
+        fallDetectionModel.setFallData(false);
+    }
 
     public void onResume() {
         super.onResume();
@@ -71,7 +83,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         zAcceleration = sensorEvent.values[SensorManager.DATA_Z];
         //Log.d("movement", Float.toString(xAcceleration) +", " + Float.toString(yAcceleration) +", " + Float.toString(zAcceleration));
         totalAcceleration = Math.sqrt(xAcceleration*xAcceleration + yAcceleration*yAcceleration + zAcceleration*zAcceleration);
-        System.out.println(Arrays.toString(data));
+       // System.out.println(Arrays.toString(data));
         for(int i = 0; i < data.length-1; i++ ){
             data[i] = data[i+1];
         }
@@ -93,7 +105,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
                         if(data[i-1] <  5.9 && data[i] > 10){
                             return;
                         }
-                        if(data[i-1] > 15){
+                        else if(data[i-1] > 10){
                             return;
                         }
                         else {
@@ -102,18 +114,22 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
                     }
                     if(index == data.length-4 && i == data.length-1){
                         if(data[i]>7 && data[i]<11){
-                            fell = true;
-                            binding.textView5.setText("you fell");
+                            //binding.textView5.setText("you fell");
+                            fallDetectionModel.setFallData(true);
+                            fallChanceFlag = false;
+                            return;
+                        }
+                        else{
                             fallChanceFlag = false;
                         }
                     }
                 }
             }
 
-            if (totalAcceleration < 5.9) {
+            if (totalAcceleration < 5.9 && !fallChanceFlag) {
                 fallChanceFlag = true;
                 index = data.length-1;
-                binding.textView4.setText("possible fall");
+                binding.textView4.setText(Double.toString(Math.round(totalAcceleration)) +"possible fall");
                 return;
             }
 
@@ -133,6 +149,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         View view = binding.getRoot();
         return view;
     }
+
 
 
 

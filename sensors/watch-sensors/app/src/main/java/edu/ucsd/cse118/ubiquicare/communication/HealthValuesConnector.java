@@ -57,4 +57,5 @@ public class HealthValuesConnector {
         HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.HEART_RATE, HealthDataReport.EventLevel.REPORT, "device1", formattedTimestamp, datapoints);
         return heartRateReport;
     }
+    
 }
