@@ -39,6 +39,9 @@ const requestLoggerMiddleware = (req: Request, res: Response, next: Function) =>
     if (req.body !== undefined) {
         console.log(JSON.stringify(req.body));
     }
+    if(req.query !== undefined) {
+        console.log(JSON.stringify(req.query));
+    }
     next(); // Call the next middleware in the stack
 };
 
