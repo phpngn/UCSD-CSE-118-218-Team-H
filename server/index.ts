@@ -141,7 +141,7 @@ app.get('/api/notifications', async (req: Request, res: Response) => {
 
 });
 
-app.get('/api/notifications/check', async (req: Request, res: Response) => {
+app.patch('/api/notifications/check', async (req: Request, res: Response) => {
     let rows = await db.markNotificationAsRead(req.query.title as string);
     return res.send("Ok");
 });
@@ -186,7 +186,8 @@ app.get('/api/summary/bloodoxygen/maximum', async (req: Request, res: Response) 
 });
 
 app.delete('/api/notifications', async (req: Request, res: Response) => {
-    if (!db.isNotification(req.query.title as string)) {
+    let temp = await db.isNotification(req.query.title as string);
+    if (temp.length == 0) {
         return res.status(400).send("Not found");
     }
     let rows = await db.deleteNotification(req.query.title as string);
