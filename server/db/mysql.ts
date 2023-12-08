@@ -117,9 +117,9 @@ export default class DB {
         return rows
     }
 
-    async getNotifications(device_id: string) {
-        let query = "SELECT * FROM Events e WHERE e.device_id = ? AND read = false AND checked = false ORDER BY e.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query, [device_id]);
+    async getNotifications() {
+        let query = "SELECT * FROM Events e WHERE read = false AND checked = false ORDER BY e.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, []);
         return rows
     }
 

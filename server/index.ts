@@ -86,19 +86,19 @@ const insertEventHandler = async (requestObj: EventRequest) => {
 }
 
 app.post('/api/event', async (req: Request, res: Response) => {
+    console.log(req.body)
+    console.log(JSON.stringify(req.body))
     console.log("Received event")
     let promises = [];
-    for (let i = 0; i < req.body.length; i++) {
-        let requestObj = req.body[i];
-        promises.push(insertEventHandler(requestObj));
-    }
+    let requestObj = req.body;
+    promises.push(insertEventHandler(requestObj));
     await Promise.all(promises);
-    res.send('{"message": "ok"}');
+    res.send("Ok");
 });
 
 
 app.get('/api/summary/heartrate/average', async (req: Request, res: Response) => {
-    let mc = req.query.minutes; 
+    let mc = req.query.minutes;
     console.log(mc)
     let minuteCount = 0;
     if (mc !== undefined && typeof mc === "string") {
@@ -119,7 +119,7 @@ app.get('/api/summary/heartrate/average', async (req: Request, res: Response) =>
 });
 
 app.get('/api/notification', async (req: Request, res: Response) => {
-    let rows = await db.getNotifications(req.query.id as string);
+    let rows = await db.getNotifications();
 });
 
 app.get('/api/notification/read', async (req: Request, res: Response) => {
