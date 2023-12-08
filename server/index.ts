@@ -44,13 +44,13 @@ const db = new DB();
 
 
 app.get('/', async (req: Request, res: Response) => {
-    res.send('Ubiqui.care API');
+    return res.send('Ubiqui.care API');
 });
 
 app.get('/api/schema', async (req: Request, res: Response) => {
     console.log("Initializing schema")
     await db.initSchema();
-    res.send('Ok');
+    return res.send('Ok');
 });
 
 const insertEventHandler = async (requestObj: EventRequest) => {
@@ -93,7 +93,7 @@ app.post('/api/event', async (req: Request, res: Response) => {
     let requestObj = req.body;
     promises.push(insertEventHandler(requestObj));
     await Promise.all(promises);
-    res.send("Ok");
+    return res.send("Ok");
 });
 
 
@@ -111,31 +111,41 @@ app.get('/api/summary/heartrate/average', async (req: Request, res: Response) =>
     }
     let rows = await db.getAverage("heartrate", minuteCount, infinite);
     if (rows !== undefined && rows.length >= 0 && rows[0].average !== null) {
-        res.send({ "message": "ok", "value": + rows[0].average });
+        return res.send({ "message": "ok", "value": + rows[0].average });
     }
     else {
-        res.send({ "message": "notfound" });
+        return res.send({ "message": "notfound" });
     }
 });
 
-app.get('/api/notification', async (req: Request, res: Response) => {
+app.get('/api/notifications', async (req: Request, res: Response) => {
     let rows = await db.getNotifications();
+    if (rows !== undefined && rows.length > 0) {
+        return res.send({ "message": "ok", "value": rows });
+    }
+    else {
+        return res.send({ "message": "notfound" });
+    }
+
 });
 
-app.get('/api/notification/read', async (req: Request, res: Response) => {
-    let rows = await db.markNotificationAsRead(req.query.type as string);
+app.get('/api/notifications/check', async (req: Request, res: Response) => {
+    let rows = await db.markNotificationAsRead(req.query.title as string);
+    return res.send("Ok");
 });
 
-app.post('/api/notification', async (req: Request, res: Response) => {
-    await db.insertNotification(req.body.id as string, req.body.title as string, req.body.message as string, req.body.timestamp as string);
+app.post('/api/notifications', async (req: Request, res: Response) => {
+    await db.insertNotification(req.body.title as string, req.body.timestamp as string);
+    return res.send("Ok");
 });
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {
     let rows = await db.getCurrentHeartrate();
     if (rows !== undefined && rows.length >= 0) {
         console.log(rows[0]);
-        res.send({ "message": "ok", "value": rows[0].value });
+        return res.send({ "message": "ok", "value": rows[0].value });
     }
+    return res.send("Everything went wrong");
 });
 
 app.get('/api/summary/fall/last', async (req: Request, res: Response) => {

@@ -113,25 +113,29 @@ export default class DB {
     async getLastFall() {
         let maxSeconds = 20;
         let query = "SELECT * FROM Events e WHERE e.type = 'fall' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY e.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query,[maxSeconds]);
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
         return rows
     }
 
     async getNotifications() {
-        let query = "SELECT * FROM Events e WHERE read = false AND checked = false ORDER BY e.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query, []);
+        let maxSeconds = 20;
+        let query = "SELECT * FROM Notifications n WHERE checked = false AND n.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY n.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
         return rows
     }
 
     async markNotificationAsRead(type: string) {
-        let query = "UPDATE Events SET checked = true WHERE type = ?";
+        let query = "UPDATE Notifications SET checked = true WHERE title = ?";
         const [rows]: any = await this.executePreparedStatement(query, [type]);
         return rows
     }
 
-    async insertNotification(device_id: string, title: string, message: string, timestamp: string) {
-        let query = "INSERT INTO Events (device_id, title message, checked, timestamp) VALUES (?,?,?,?)";
-        const [rows]: any = await this.executePreparedStatement(query, [device_id, title, message, false, timestamp]);
+    async insertNotification(title: string, timestamp: string) {
+        console.log("inserting notification")
+        let query = "INSERT INTO Notifications (title, timestamp) VALUES (?,?)";
+        const [rows]: any = await this.executePreparedStatement(query, [title, timestamp]);
+        console.log("inserted: ", rows)
         return rows
+
     }
 }
