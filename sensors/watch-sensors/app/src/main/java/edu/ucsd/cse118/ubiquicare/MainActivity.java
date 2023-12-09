@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 import edu.ucsd.cse118.ubiquicare.databinding.ActivityMainBinding;
 import edu.ucsd.cse118.ubiquicare.reminders.RemindersFetcher;
 import edu.ucsd.cse118.ubiquicare.sensors.HeartRateFragment;
+import android.content.Context;
 
 public class MainActivity extends FragmentActivity {
 
@@ -34,7 +35,7 @@ public class MainActivity extends FragmentActivity {
         ft.replace(R.id.your_placeholder, new HeartRateFragment(this));
         ft.commit();
 
-        remindersFetcher = new RemindersFetcher();
+        remindersFetcher = new RemindersFetcher(this);
         remindersFetcher.startFetchingReminders();
     }
 

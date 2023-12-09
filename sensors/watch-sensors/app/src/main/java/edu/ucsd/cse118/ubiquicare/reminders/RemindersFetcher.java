@@ -1,5 +1,6 @@
 package edu.ucsd.cse118.ubiquicare.reminders;
 
+import android.content.Context;
 import android.util.Log;
 import android.os.Handler;
 
@@ -8,9 +9,11 @@ import edu.ucsd.cse118.ubiquicare.communication.RemindersConnector;
 
 public class RemindersFetcher {
     private RemindersConnector remindersConnector;
+    private Context context;
 
-    public RemindersFetcher() {
+    public RemindersFetcher(Context context) {
         remindersConnector = new RemindersConnector();
+        this.context = context;
     }
 
     private boolean isFetching = false;
@@ -48,6 +51,10 @@ public class RemindersFetcher {
                             // Handle received reminder
                             // Forward the reminder to the necessary location or perform actions
                             Log.d("fetchRemindersPeriodically", reminder.getTitle());
+                            SmartwatchController smartwatchController = new SmartwatchController(context);
+                            smartwatchController.vibrateSmartwatch();
+                            smartwatchController.showNotification("Your notification message here");
+
                         }
 
                         @Override
