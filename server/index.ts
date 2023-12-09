@@ -34,23 +34,36 @@ export type EventRequest = {
     datapoints: RequestDatapoint[]
 }
 
+const requestLoggerMiddleware = (req: Request, res: Response, next: Function) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    if (req.body !== undefined) {
+        console.log(JSON.stringify(req.body));
+    }
+    if(req.query !== undefined) {
+        console.log(JSON.stringify(req.query));
+    }
+    next(); // Call the next middleware in the stack
+};
+
+
 dotenv.config();
 
 const app: Express = express();
 app.use(express.json());
+app.use(requestLoggerMiddleware);
 app.use(cors());
 const port: string | undefined = process.env.PORT || '3000';
 const db = new DB();
 
 
 app.get('/', async (req: Request, res: Response) => {
-    res.send('Ubiqui.care API');
+    return res.send('Ubiqui.care API');
 });
 
 app.get('/api/schema', async (req: Request, res: Response) => {
     console.log("Initializing schema")
     await db.initSchema();
-    res.send('Ok');
+    return res.send('Ok');
 });
 
 const insertEventHandler = async (requestObj: EventRequest) => {
@@ -81,24 +94,23 @@ const insertEventHandler = async (requestObj: EventRequest) => {
         }
         dps.push(newDatapoint);
     }
-    //TODO check if insert successful otherwise return error
     let insertDPsResult = await db.insertDatapoints(dps);
 }
 
 app.post('/api/event', async (req: Request, res: Response) => {
+    console.log(req.body)
+    console.log(JSON.stringify(req.body))
     console.log("Received event")
     let promises = [];
-    for (let i = 0; i < req.body.length; i++) {
-        let requestObj = req.body[i];
-        promises.push(insertEventHandler(requestObj));
-    }
+    let requestObj = req.body;
+    promises.push(insertEventHandler(requestObj));
     await Promise.all(promises);
-    res.send('{"message": "ok"}');
+    return res.send("Ok");
 });
 
 
 app.get('/api/summary/heartrate/average', async (req: Request, res: Response) => {
-    let mc = req.query.minutes; 
+    let mc = req.query.minutes;
     console.log(mc)
     let minuteCount = 0;
     if (mc !== undefined && typeof mc === "string") {
@@ -111,30 +123,84 @@ app.get('/api/summary/heartrate/average', async (req: Request, res: Response) =>
     }
     let rows = await db.getAverage("heartrate", minuteCount, infinite);
     if (rows !== undefined && rows.length >= 0 && rows[0].average !== null) {
-        res.send({ "message": "ok", "value": + rows[0].average });
+        return res.send({ "message": "ok", "value": + rows[0].average });
     }
     else {
-        res.send({ "message": "notfound" });
+        return res.send({ "message": "notfound" });
     }
 });
 
-app.get('/api/notification', async (req: Request, res: Response) => {
-    let rows = await db.getNotifications(req.query.id as string);
+app.get('/api/notifications', async (req: Request, res: Response) => {
+    let rows = await db.getNotifications();
+    if (rows !== undefined && rows.length > 0) {
+        return res.send(rows);
+    }
+    else {
+        return res.send([]);
+    }
+
 });
 
-app.get('/api/notification/read', async (req: Request, res: Response) => {
-    let rows = await db.markNotificationAsRead(req.query.type as string);
+app.patch('/api/notifications/check', async (req: Request, res: Response) => {
+    let rows = await db.markNotificationAsRead(req.query.title as string);
+    return res.send("Ok");
 });
 
-app.post('/api/notification', async (req: Request, res: Response) => {
-    db.insertNotification(req.body.id as string, req.body.type as string, req.body.alert as boolean, req.body.timestamp as string);
+app.post('/api/notifications', async (req: Request, res: Response) => {
+    await db.insertNotification(req.body.title as string, req.body.timestamp as string);
+    return res.send("Ok");
 });
 
 app.get('/api/heartrate', async (req: Request, res: Response) => {
     let rows = await db.getCurrentHeartrate();
-    if (rows !== undefined && rows.length >= 0) {
+    if (rows !== undefined && rows.length > 0) {
         console.log(rows[0]);
-        res.send({ "message": "ok", "value": rows[0].value });
+        return res.send({ "message": "ok", "value": rows[0].value });
+    }
+    return res.send("Everything went wrong");
+});
+
+app.get('/api/emergency', async (req: Request, res: Response) => {
+    let rows = await db.getEmergency();
+    if (rows !== undefined && rows.length > 0) {
+        console.log(rows[0]);
+        return res.send({ "message": "ok", "value": rows[0].value });
+    } else {
+        return res.send({ "message": "notfound" });
+    }
+});
+
+app.get('/api/summary/bloodoxygen/maximum', async (req: Request, res: Response) => {
+    let seconds = req.query.seconds;
+    let maxSeconds = 20;
+    if (seconds !== undefined && typeof seconds === "string") {
+        maxSeconds = parseInt(seconds, 10);
+    }
+    let rows = await db.getMaximum(maxSeconds);
+    if (rows !== undefined && rows.length >= 0 && rows[0].maximum !== null) {
+        return res.send({ "message": "ok", "value": + rows[0].maximum });
+    }
+    else {
+        return res.send({ "message": "notfound" });
+    }
+});
+
+app.delete('/api/notifications', async (req: Request, res: Response) => {
+    let temp = await db.isNotification(req.query.title as string);
+    if (temp.length == 0) {
+        return res.status(400).send("Not found");
+    }
+    let rows = await db.deleteNotification(req.query.title as string);
+    return res.send("Ok");
+});
+
+app.get('/api/notifications/all', async (req: Request, res: Response) => {
+    let rows = await db.getAllNotifications();
+    if (rows !== undefined && rows.length > 0) {
+        return res.send(rows);
+    }
+    else {
+        return res.send([]);
     }
 });
 
@@ -142,10 +208,10 @@ app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
     let rows = await db.getLastFall();
     console.log(rows);
     if (rows !== undefined && rows.length > 0) {
-        res.send({ "message": "ok", "last": rows[0].value });
+        return res.send({ "message": "ok", "last": rows[0].value });
     }
     else {
-        res.send({ "message": "notfound" });
+        return res.send({ "message": "notfound" });
     }
 });
 

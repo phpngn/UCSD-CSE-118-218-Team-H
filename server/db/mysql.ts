@@ -24,8 +24,6 @@ export type Datapoint = {
 }
 
 
-
-
 dotenv.config();
 
 export default class DB {
@@ -104,6 +102,12 @@ export default class DB {
         return rows;
     }
 
+    async getMaximum(seconds: number) {
+        let query = "SELECT MAX(d.value) AS maximum FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = 'heartrate' AND e.type = 'heartrate' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND)";
+        const [rows]: any = await this.executePreparedStatement(query, [seconds]);
+        return rows;
+    }
+
     async getCurrentHeartrate() {
         let query = "SELECT value FROM Datapoints WHERE sensor = 'heartrate' ORDER BY id DESC LIMIT 1";
         const [rows]: any = await this.executePreparedStatement(query);
@@ -113,25 +117,53 @@ export default class DB {
     async getLastFall() {
         let maxSeconds = 20;
         let query = "SELECT * FROM Events e WHERE e.type = 'fall' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY e.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query,[maxSeconds]);
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
         return rows
     }
 
-    async getNotifications(device_id: string) {
-        let query = "SELECT * FROM Events e WHERE e.device_id = ? AND read = false AND checked = false ORDER BY e.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query, [device_id]);
+    async getNotifications() {
+        let maxSeconds = 10;
+        let query = "SELECT * FROM Notifications n WHERE checked = false AND n.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) AND n.timestamp <= DATE_ADD(NOW(), INTERVAL ? SECOND) ORDER BY n.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds, maxSeconds]);
         return rows
     }
 
     async markNotificationAsRead(type: string) {
-        let query = "UPDATE Events SET read = true WHERE type = ?";
+        let query = "UPDATE Notifications SET checked = true WHERE title = ?";
         const [rows]: any = await this.executePreparedStatement(query, [type]);
         return rows
     }
 
-    async insertNotification(device_id: string, type: string, alert: boolean, timestamp: string) {
-        let query = "INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)";
-        const [rows]: any = await this.executePreparedStatement(query, [device_id, type, alert, timestamp]);
+    async insertNotification(title: string, timestamp: string) {
+        console.log("inserting notification")
+        let query = "INSERT INTO Notifications (title, timestamp) VALUES (?,?)";
+        const [rows]: any = await this.executePreparedStatement(query, [title, timestamp]);
+        console.log("inserted: ", rows)
+        return rows
+    }
+
+    async getEmergency() {
+        let maxSeconds = 20;
+        let query = "SELECT * FROM Events WHERE type = 'emergency' AND timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) AND alert = true ORDER BY id DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
+        return rows
+    }
+
+    async isNotification(title: string) {
+        let query = "SELECT * FROM Notifications WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [title]);
+        return rows
+    }
+
+    async deleteNotification(title: string) {
+        let query = "DELETE FROM Notifications WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [title]);
+        return rows
+    }
+
+    async getAllNotifications() {
+        let query = "SELECT * FROM Notifications WHERE timestamp >= now() ORDER BY timestamp DESC";
+        const [rows]: any = await this.executePreparedStatement(query);
         return rows
     }
 }

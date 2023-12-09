@@ -5,8 +5,8 @@ import {type Writable, writable} from 'svelte/store';
 export const currentHeartRate:Writable<Number> = writable(-1);
 export const isFall:Writable<Boolean> = writable(false);
 
-const executeSecondsHeartRate = 5;
-const executeSecondsIsFall = 5;
+const executeSecondsHeartRate = 1;
+const executeSecondsIsFall = 1;
 
 export function startAllSchedulers() {
     startHeartRateScheduler();
@@ -28,7 +28,8 @@ export function startIsFallScheduler() {
 }
 
 
-const backendHost = 'https://ubiqui-care.fly.dev/';
+const backendHost = 'https://ubiqui-care.fly.dev';
+
 export async function fetchCurrentHeartRate() {
     try {
         const response = await fetch(backendHost+'/api/heartrate');
