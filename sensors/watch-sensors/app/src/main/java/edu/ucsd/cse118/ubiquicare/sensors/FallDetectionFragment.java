@@ -43,7 +43,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
     private boolean fallChanceFlag = false;
 
     private FallDetectionModel fallDetectionModel;
-    private double[] data = {9,9,9,9,9,9};
+    private Double[] data = new Double[] {9.0,9.0,9.0,9.0,9.0,9.0};
     private int index = 0;
 
     private float numberUpdates = 0;
@@ -116,6 +116,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
                         if(data[i]>7 && data[i]<11){
                             //binding.textView5.setText("you fell");
                             fallDetectionModel.setFallData(true);
+                            fallDetectionModel.setFallValuesData(Arrays.asList(data));
                             fallChanceFlag = false;
                             return;
                         }

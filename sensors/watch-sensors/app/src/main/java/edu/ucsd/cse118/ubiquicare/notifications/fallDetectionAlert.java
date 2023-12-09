@@ -14,10 +14,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import edu.ucsd.cse118.ubiquicare.FallDetectionModel;
 import edu.ucsd.cse118.ubiquicare.R;
+import edu.ucsd.cse118.ubiquicare.communication.HealthValuesConnector;
 
 public class fallDetectionAlert extends DialogFragment {
     private static Context mcontext;
     private FallDetectionModel fallDetectionModel;
+
+    private HealthValuesConnector healthValuesConnector;
     public static fallDetectionAlert newInstance(Context context) {
         fallDetectionAlert f = new fallDetectionAlert();
         mcontext = context;
@@ -28,6 +31,7 @@ public class fallDetectionAlert extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          fallDetectionModel = new ViewModelProvider(requireActivity()).get(FallDetectionModel.class);
+         healthValuesConnector = new HealthValuesConnector();
 
     }
 
@@ -55,6 +59,7 @@ public class fallDetectionAlert extends DialogFragment {
             @Override
             public void onClick(View v) {
                 //TODO: add something to send value that fell
+                healthValuesConnector.sendFallDetectionValues(fallDetectionModel.getFallValuesData());
                 fallDetectionModel.setFallData(false);
                 getActivity().onBackPressed();
             }

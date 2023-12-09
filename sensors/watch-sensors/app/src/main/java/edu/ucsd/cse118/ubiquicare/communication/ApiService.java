@@ -11,5 +11,7 @@ import retrofit2.http.POST;
 public interface ApiService {
     @POST("event")
     Call<String> reportHeartRate(@Body HealthDataReport heartRateReport);
+    @POST("event")
+    Call<String> reportFallDetection(@Body HealthDataReport fallDetectionReport);
 }
 

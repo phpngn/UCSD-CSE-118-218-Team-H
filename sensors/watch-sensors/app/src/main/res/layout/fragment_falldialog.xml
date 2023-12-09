@@ -10,22 +10,25 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="50dp"
-        android:text="Did you Fall?" />
+        android:text="Did you Fall?"
+        android:textSize="20dp" />
 
     <Button
         android:id="@+id/yes_button"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:text="Yes"/>
+        android:layout_marginTop="0dp"
+        android:text="Yes"
+        android:backgroundTint="#0CA620"/>
     <Button
         android:id="@+id/no_button"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:text="No"/>
+        android:text="No"
+        android:backgroundTint="#A60C0C"/>
 
 
 </FrameLayout>
