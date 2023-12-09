@@ -5,36 +5,36 @@ import java.sql.Time;
 
 public class Reminder {
     private String title;
-    private Time time;
-    private boolean checkedOff;
+    private String timestamp;
+    private int checked;
 
-    public Reminder(String title, Time time, boolean checkedOff) {
+    public Reminder(String title, String timestamp, int checked) {
         this.title = title;
-        this.time = time;
-        this.checkedOff = checkedOff;
+        this.timestamp = timestamp;
+        this.checked = checked;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public Time getTime() {
-        return time;
+    public String getTime() {
+        return timestamp;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setTime(Time time) {
-        this.time = time;
+    public void setTime(String timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public boolean isCheckedOff() {
-        return checkedOff;
+    public int isChecked() {
+        return checked;
     }
 
-    public void setCheckedOff(boolean checkedOff) {
-        this.checkedOff = checkedOff;
+    public void setChecked(int checked) {
+        this.checked = checked;
     }
 }

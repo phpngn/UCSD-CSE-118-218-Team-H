@@ -13,11 +13,11 @@ import androidx.fragment.app.FragmentTransaction;
 import edu.ucsd.cse118.ubiquicare.databinding.ActivityMainBinding;
 import edu.ucsd.cse118.ubiquicare.reminders.RemindersFetcher;
 import edu.ucsd.cse118.ubiquicare.sensors.HeartRateFragment;
-import android.content.Context;
 
 public class MainActivity extends FragmentActivity {
 
     private TextView mTextView;
+    private TextView mReminderTextView;
     private ActivityMainBinding binding;
     private RemindersFetcher remindersFetcher;
 
@@ -30,9 +30,10 @@ public class MainActivity extends FragmentActivity {
         setContentView(binding.getRoot());
 
         mTextView = binding.text;
+        mReminderTextView = binding.reminderTextView;
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.your_placeholder, new HeartRateFragment(this));
+        ft.replace(R.id.heart_rate_fragment_placeholder, new HeartRateFragment(this));
         ft.commit();
 
         remindersFetcher = new RemindersFetcher(this);
@@ -49,5 +50,11 @@ public class MainActivity extends FragmentActivity {
     protected void onRestart() {
         super.onRestart();
         remindersFetcher.startFetchingReminders();
+    }
+
+    public void updateReminderText(String text) {
+        if (mReminderTextView != null) {
+            mReminderTextView.setText(text);
+        }
     }
 }

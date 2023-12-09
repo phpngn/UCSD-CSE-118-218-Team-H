@@ -17,7 +17,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="30dp"
             android:padding="@dimen/inner_frame_layout_padding"
             app:layout_boxedEdges="all">
 
@@ -25,15 +25,26 @@
                 android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hello_world" />
-
+                android:text="UBIQUI CARE HEALTH" />
 
         </FrameLayout>
+
         <FrameLayout
-            android:id="@+id/your_placeholder"
+            android:id="@+id/reminder_fragment_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:id="@+id/reminderTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Reminder" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/heart_rate_fragment_placeholder"
             android:layout_width="match_parent"
             android:layout_height="83dp">
-
         </FrameLayout>
 
     </LinearLayout>

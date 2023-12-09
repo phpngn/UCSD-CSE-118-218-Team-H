@@ -4,8 +4,11 @@ import android.content.Context;
 import android.util.Log;
 import android.os.Handler;
 
+import java.util.List;
+
 import edu.ucsd.cse118.ubiquicare.model.Reminder;
 import edu.ucsd.cse118.ubiquicare.communication.RemindersConnector;
+import edu.ucsd.cse118.ubiquicare.MainActivity;
 
 public class RemindersFetcher {
     private RemindersConnector remindersConnector;
@@ -45,22 +48,34 @@ public class RemindersFetcher {
             public void run() {
                 if (isFetching) {
                     // Fetch reminders here
-                    remindersConnector.getReminderDue(new RemindersConnector.ReminderListener() {
+                    remindersConnector.getRemindersDue(new RemindersConnector.RemindersListener() {
                         @Override
-                        public void onReminderReceived(Reminder reminder) {
+                        public void onRemindersReceived(List<Reminder> reminders) {
                             // Handle received reminder
                             // Forward the reminder to the necessary location or perform actions
-                            Log.d("fetchRemindersPeriodically", reminder.getTitle());
-                            SmartwatchController smartwatchController = new SmartwatchController(context);
-                            smartwatchController.vibrateSmartwatch();
-                            smartwatchController.showNotification("Your notification message here");
+                            if (reminders.size() > 0) {
+                                String reminderText = reminders.get(0).getTitle();
+                                Log.d("fetchRemindersPeriodically", reminderText);
+                                SmartwatchController smartwatchController = new SmartwatchController(context);
+                                smartwatchController.vibrateSmartwatch();
 
+                                if (context instanceof MainActivity) {
+                                    MainActivity mainActivity = (MainActivity) context;
+                                    mainActivity.updateReminderText("Reminder now: " + reminderText);
+                                }
+                            } else {
+                                Log.d("fetchRemindersPeriodically", "no reminder");
+                                if (context instanceof MainActivity) {
+                                    MainActivity mainActivity = (MainActivity) context;
+                                    mainActivity.updateReminderText("Currently no reminders");
+                                }
+                            }
                         }
 
                         @Override
-                        public void onReminderFailed(String errorMessage) {
+                        public void onRemindersFailed(String errorMessage) {
                             // Handle failure/error in receiving the reminder
-                            Log.d("fetchRemindersPeriodically", "no reminder");
+                            Log.d("fetchRemindersPeriodically", "onRemindersFailed: " + errorMessage);
                         }
                     });
 

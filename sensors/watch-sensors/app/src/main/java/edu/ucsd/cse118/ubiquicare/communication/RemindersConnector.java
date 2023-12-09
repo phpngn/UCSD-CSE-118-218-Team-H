@@ -2,6 +2,8 @@ package edu.ucsd.cse118.ubiquicare.communication;
 
 import android.util.Log;
 
+import java.util.List;
+
 import edu.ucsd.cse118.ubiquicare.communication.ApiService;
 import edu.ucsd.cse118.ubiquicare.communication.RetrofitClient;
 import edu.ucsd.cse118.ubiquicare.model.Reminder;
@@ -16,44 +18,45 @@ public class RemindersConnector {
         apiService = RetrofitClient.getClient().create(ApiService.class);
     }
 
-    public interface ReminderListener {
-        void onReminderReceived(Reminder reminder);
-        
-        void onReminderFailed(String errorMessage);
+    public interface RemindersListener {
+        void onRemindersReceived(List<Reminder> reminders);
+        void onRemindersFailed(String errorMessage);
     }
-    
-    public void getReminderDue(final ReminderListener reminderListener) {
-        Call<Reminder> call = apiService.getReminderDue();
-        call.enqueue(new Callback<Reminder>() {
+
+
+    public void getRemindersDue(final RemindersListener remindersListener) {
+        Call<List<Reminder>> call = apiService.getRemindersDue(); // Assuming the endpoint returns a list of reminders
+        call.enqueue(new Callback<List<Reminder>>() {
             @Override
-            public void onResponse(Call<Reminder> call, Response<Reminder> response) {
+            public void onResponse(Call<List<Reminder>> call, Response<List<Reminder>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     // Handle successful response here
-                    Reminder receivedReminder = response.body();
-                    System.out.println("Reminder received successfully");
-                    Log.d("getReminderDue", "call: " + call);
-                    Log.d("getReminderDue", "onResponse: " + response);
-    
-                    // Pass the received reminder outside the method
-                    reminderListener.onReminderReceived(receivedReminder);
+                    List<Reminder> receivedReminders = response.body();
+
+                    System.out.println("Reminders received successfully");
+                    Log.d("getRemindersDue", "call: " + call);
+                    Log.d("getRemindersDue", "onResponse: " + response);
+
+                    // Pass the received reminders outside the method
+                    remindersListener.onRemindersReceived(receivedReminders);
                 } else {
                     // Handle unsuccessful response here
-                    System.out.println("Reminder failed to receive");
-                    Log.d("getReminderDue", "Unsuccessful response: " + response);
-                    reminderListener.onReminderFailed("Failed to receive reminder");
+                    System.out.println("Reminders failed to receive");
+                    Log.d("getRemindersDue", "Unsuccessful response: " + response);
+                    remindersListener.onRemindersFailed("Failed to receive reminders");
                 }
             }
-    
+
             @Override
-            public void onFailure(Call<Reminder> call, Throwable t) {
+            public void onFailure(Call<List<Reminder>> call, Throwable t) {
                 // Handle failure/error here
-                System.out.println("Reminder failed to receive");
-                Log.d("getReminderDue", "call: " + call);
-                Log.d("getReminderDue", "onFailure: " + t.getMessage());
-    
-                reminderListener.onReminderFailed("Failed to receive reminder: " + t.getMessage());
+                System.out.println("Reminders failed to receive");
+                Log.d("getRemindersDue", "call: " + call);
+                Log.d("getRemindersDue", "onFailure: " + t.getMessage());
+
+                remindersListener.onRemindersFailed("Failed to receive reminders: " + t.getMessage());
             }
         });
     }
-    
 }
+
