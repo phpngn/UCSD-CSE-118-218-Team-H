@@ -122,9 +122,9 @@ export default class DB {
     }
 
     async getNotifications() {
-        let maxSeconds = 20;
-        let query = "SELECT * FROM Notifications n WHERE checked = false AND n.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY n.timestamp DESC LIMIT 1";
-        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
+        let maxSeconds = 10;
+        let query = "SELECT * FROM Notifications n WHERE checked = false AND n.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) AND n.timestamp <= DATE_ADD(NOW(), INTERVAL ? SECOND) ORDER BY n.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds, maxSeconds]);
         return rows
     }
 
