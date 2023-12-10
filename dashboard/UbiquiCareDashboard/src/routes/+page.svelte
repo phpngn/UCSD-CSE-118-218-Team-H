@@ -4,7 +4,7 @@
 </svelte:head>
 <script>
 	import { onMount } from 'svelte';
-	import {currentHeartRate, isEmergency, isFall, notifications, startAllSchedulers} from "$lib/data";
+	import {backendHost, currentHeartRate, isEmergency, isFall, notifications, startAllSchedulers} from "$lib/data";
 	onMount(startAllSchedulers);
 
 	let mockNotify = [
@@ -172,6 +172,24 @@
 		color: #afafaf;
 		line-height: 60px;
 	}
+	#report {
+		display: block;
+		position: relative;
+		width: 300px;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-top: 50px;
+		margin-bottom: 50px;
+		text-decoration: none;
+		background: #0081ff;
+		color: #ffffff;
+		font-weight: 600;
+		font-size: 16px;
+		text-align: center;
+		height: 50px;
+		border-radius: 10px;
+		line-height: 50px;
+	}
 </style>
 <h1>Dashboard</h1>
 <div class="container">
@@ -196,3 +214,4 @@
 		{/each}
 	</div>
 </div>
+<a id="report" href="{backendHost+'/report'}">Download Report</a>

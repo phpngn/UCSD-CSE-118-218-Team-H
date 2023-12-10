@@ -166,4 +166,11 @@ export default class DB {
         const [rows]: any = await this.executePreparedStatement(query);
         return rows
     }
+
+    async getReportData() {
+        let query = "SELECT type,value,timestamp FROM Events e JOIN Datapoints d ON e.id = d.event_id ORDER BY timestamp DESC";
+        const [rows]: any = await this.executePreparedStatement(query);
+        return rows;
+    }
+
 }

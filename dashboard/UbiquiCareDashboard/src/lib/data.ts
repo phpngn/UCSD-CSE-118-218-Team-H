@@ -57,7 +57,7 @@ export function startNotificationsScheduler() {
 
 
 //const backendHost = 'https://ubiqui-care.fly.dev';
-const backendHost = 'http://localhost:8000';
+export const backendHost = 'http://localhost:8000';
 
 export async function fetchCurrentHeartRate() {
     try {

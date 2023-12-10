@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import DB, { Datapoint, Device } from './db/mysql';
 import { type Event } from "./db/mysql";
 import cors from 'cors';
+import PDFDocument from 'pdfkit-table';
 
 export enum EventType {
     Heartrate = "heartrate",
@@ -213,6 +214,31 @@ app.get('/api/summary/fall/last', async (req: Request, res: Response) => {
     else {
         return res.send({ "message": "notfound" });
     }
+});
+
+app.get('/report', async (req, res) => {
+    let data = await db.getReportData();
+    let tableData:any[] = [];
+    for (let i = 0; i < data.length; i++) {
+        let row = data[i];
+        tableData.push([row.type, row.value, new Date(row.timestamp).toISOString()]);
+    }
+
+    const doc = new PDFDocument();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=UbiquiCare-Report.pdf');
+    doc.pipe(res);
+
+    const table = {
+        title: "UbiquiCare",
+        subtitle: "Health Report",
+        headers: [ "Event", "Value", "Timestamp" ],
+        rows: tableData,
+    };
+    await doc.table(table, {
+        width: 400,
+    });
+    doc.end();
 });
 
 app.listen(port, () => {
