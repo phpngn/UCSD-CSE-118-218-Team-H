@@ -4,6 +4,7 @@ import static com.google.android.gms.common.util.CollectionUtils.listOf;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.Manifest;
@@ -64,6 +65,16 @@ public class MainActivity extends FragmentActivity {
                     fallDetectionAlert newAlert = fallDetectionAlert.newInstance(context);
                     newAlert.show(ft2, "localAlert");
 
+                    final Handler handler  = new Handler();
+                    final Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            if (newAlert.isShowing()) {
+                                newAlert.dismiss();
+                            }
+                        }
+                    };
+                    handler.postDelayed(runnable,10000);
                 }
             }
         };

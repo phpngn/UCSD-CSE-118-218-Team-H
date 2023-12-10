@@ -2,13 +2,17 @@ package edu.ucsd.cse118.ubiquicare.notifications;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -58,12 +62,25 @@ public class fallDetectionAlert extends DialogFragment {
         view.findViewById(R.id.yes_button).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //TODO: add something to send value that fell
                 healthValuesConnector.sendFallDetectionValues(fallDetectionModel.getFallValuesData());
                 fallDetectionModel.setFallData(false);
                 getActivity().onBackPressed();
             }
         });
     }
+
+
+    @Override
+    public void dismiss() {
+        healthValuesConnector.sendFallDetectionValues(fallDetectionModel.getFallValuesData());
+        fallDetectionModel.setFallData(false);
+        getActivity().onBackPressed();
+    }
+
+
+    public boolean isShowing (){
+        return this.isVisible();
+    }
+
 
 }
