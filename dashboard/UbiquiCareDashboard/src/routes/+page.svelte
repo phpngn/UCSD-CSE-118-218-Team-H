@@ -29,7 +29,12 @@
 	}
 
 	.container {
-		display: block;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: flex-start;
+		gap: 10px;
 		position: relative;
 		width: 100%;
 		height: auto;
