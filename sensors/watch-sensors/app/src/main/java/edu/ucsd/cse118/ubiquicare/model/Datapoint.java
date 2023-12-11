@@ -5,7 +5,9 @@ import com.google.gson.annotations.SerializedName;
 public class Datapoint {
     public enum Sensor {
         @SerializedName("heartrate")
-        HEART_RATE;
+        HEART_RATE,
+        @SerializedName("falldetection")
+        FALL_DETECTION;
     }
     private Sensor sensor;
     private float value;

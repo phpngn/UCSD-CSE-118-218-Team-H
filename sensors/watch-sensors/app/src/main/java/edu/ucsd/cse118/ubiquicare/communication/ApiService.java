@@ -14,7 +14,11 @@ public interface ApiService {
     @POST("event")
     Call<String> reportHeartRate(@Body HealthDataReport heartRateReport);
 
+    @POST("event")
+    Call<String> reportFallDetection(@Body HealthDataReport fallDetectionReport);
+
     @GET("notifications")
     Call<List<Reminder>> getRemindersDue();
+
 }
 

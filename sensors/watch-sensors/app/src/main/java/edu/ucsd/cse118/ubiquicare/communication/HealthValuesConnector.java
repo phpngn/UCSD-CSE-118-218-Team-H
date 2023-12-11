@@ -56,4 +56,40 @@ public class HealthValuesConnector {
         HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.HEART_RATE, HealthDataReport.EventLevel.REPORT, "device1", formattedTimestamp, datapoints);
         return heartRateReport;
     }
+
+    public void sendFallDetectionValues(List<Double> values) {
+        Log.d("sendFallDetectionValues", "sendFallDetectionValues: " + values.toString());
+        HealthDataReport fallDetectionReport = createFallDetectionAlert(values);
+
+        Call<String> call = apiService.reportFallDetection(fallDetectionReport);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                // Handle successful response here
+                System.out.println("Fall values sent successfully");
+                Log.d("sendFallDetectionValues", "call: " + call);
+                Log.d("sendFallDetectionValues", "onResponse: " + response);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                // Handle failure/error here
+                System.out.println("Fall values failed to send");
+                Log.d("sendFallDetectionValues", "call: " + call);
+                Log.d("sendFallDetectionValues", "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
+    //fall confirmed
+    public HealthDataReport createFallDetectionAlert(List<Double> values) {
+        Timestamp timestamp = new Timestamp(new Date().getTime());
+        String formattedTimestamp = timestamp.toString().replaceAll("Z", "");
+        List<Datapoint> datapoints = new ArrayList<>();
+        for (Double value : values) {
+            datapoints.add(new Datapoint(Datapoint.Sensor.FALL_DETECTION, value.floatValue()));
+        }
+        HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.FALL_DETECTION, HealthDataReport.EventLevel.ALERT, "device1", formattedTimestamp, datapoints);
+        return heartRateReport;
+    }
 }

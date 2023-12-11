@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="heart_rate_fragment_placeholder" type="id" />
+    <item name="reminderTextView" type="id" />
+    <item name="reminder_fragment_placeholder" type="id" />
+</resources>
