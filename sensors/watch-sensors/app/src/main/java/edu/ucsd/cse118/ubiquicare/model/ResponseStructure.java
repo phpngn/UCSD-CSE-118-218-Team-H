@@ -1,4 +1,4 @@
-package edu.ucsd.cse118.ubiquicare.communication.model;
+package edu.ucsd.cse118.ubiquicare.model;
 
 public class ResponseStructure {
     public ResponseStructure() {

@@ -24,8 +24,6 @@ export type Datapoint = {
 }
 
 
-
-
 dotenv.config();
 
 export default class DB {
@@ -68,7 +66,7 @@ export default class DB {
         return result.insertId;
     }
 
-    async insertEvent(device: Event) : Promise<number> {
+    async insertEvent(device: Event): Promise<number> {
         let sql = `INSERT INTO Events (device_id, type, alert, timestamp) VALUES (?,?,?,?)`;
         let result: any = await this.executePreparedStatement(sql, [device.device_id, device.type, device.alert, device.timestamp]);
         console.log(result)
@@ -94,5 +92,78 @@ export default class DB {
             return rows[0] as Device;
         }
         else return undefined;
+    }
+
+    async getAverage(field: string, minuteCount: number, infinite: boolean) {
+        let query = "SELECT AVG(d.value) AS average FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = '" + field + "' AND e.type = '" + field + "'";
+        query = infinite ? query : query + " AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+        console.log(query)
+        const [rows]: any = await this.executePreparedStatement(query, [minuteCount]);
+        return rows;
+    }
+
+    async getMaximum(seconds: number) {
+        let query = "SELECT MAX(d.value) AS maximum FROM Datapoints d JOIN Events e ON d.event_id = e.id WHERE d.sensor = 'heartrate' AND e.type = 'heartrate' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND)";
+        const [rows]: any = await this.executePreparedStatement(query, [seconds]);
+        return rows;
+    }
+
+    async getCurrentHeartrate() {
+        let query = "SELECT value FROM Datapoints WHERE sensor = 'heartrate' ORDER BY id DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query);
+        return rows
+    }
+
+    async getLastFall() {
+        let maxSeconds = 20;
+        let query = "SELECT * FROM Events e WHERE e.type = 'fall' AND e.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) ORDER BY e.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
+        return rows
+    }
+
+    async getNotifications() {
+        let maxSeconds = 10;
+        let query = "SELECT * FROM Notifications n WHERE checked = false AND n.timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) AND n.timestamp <= DATE_ADD(NOW(), INTERVAL ? SECOND) ORDER BY n.timestamp DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds, maxSeconds]);
+        return rows
+    }
+
+    async markNotificationAsRead(type: string) {
+        let query = "UPDATE Notifications SET checked = true WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [type]);
+        return rows
+    }
+
+    async insertNotification(title: string, timestamp: string) {
+        console.log("inserting notification")
+        let query = "INSERT INTO Notifications (title, timestamp) VALUES (?,?)";
+        const [rows]: any = await this.executePreparedStatement(query, [title, timestamp]);
+        console.log("inserted: ", rows)
+        return rows
+    }
+
+    async getEmergency() {
+        let maxSeconds = 20;
+        let query = "SELECT * FROM Events WHERE type = 'emergency' AND timestamp >= DATE_SUB(NOW(), INTERVAL ? SECOND) AND alert = true ORDER BY id DESC LIMIT 1";
+        const [rows]: any = await this.executePreparedStatement(query, [maxSeconds]);
+        return rows
+    }
+
+    async isNotification(title: string) {
+        let query = "SELECT * FROM Notifications WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [title]);
+        return rows
+    }
+
+    async deleteNotification(title: string) {
+        let query = "DELETE FROM Notifications WHERE title = ?";
+        const [rows]: any = await this.executePreparedStatement(query, [title]);
+        return rows
+    }
+
+    async getAllNotifications() {
+        let query = "SELECT * FROM Notifications WHERE timestamp >= now() ORDER BY timestamp DESC";
+        const [rows]: any = await this.executePreparedStatement(query);
+        return rows
     }
 }

@@ -16,4 +16,11 @@ CREATE TABLE IF NOT EXISTS Datapoints (
     event_id INT UNSIGNED,
     sensor TEXT NOT NULL,
     value FLOAT
+);
+CREATE TABLE IF NOT EXISTS Notifications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    device_id INT UNSIGNED DEFAULT NULL,
+    title TEXT NOT NULL,
+    checked BOOLEAN DEFAULT FALSE,
+    timestamp TIMESTAMP
 )

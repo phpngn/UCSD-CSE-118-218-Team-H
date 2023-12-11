@@ -1,4 +1,4 @@
-package edu.ucsd.cse118.ubiquicare;
+package edu.ucsd.cse118.ubiquicare.sensors;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -24,10 +24,5 @@ public class FallDetectionModel extends ViewModel {
     public void setFallValuesData(List<Double> values){
         fallenValuesLiveData = values;
     }
-
-    public FallDetectionModel(){
-
-    }
-
 
 }

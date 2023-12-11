@@ -15,31 +15,45 @@
         android:padding="@dimen/inner_frame_layout_padding"
         app:layout_boxedEdges="all">
 
-        <ScrollView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="384dp">
+            android:layout_height="30dp"
+            android:padding="@dimen/inner_frame_layout_padding"
+            app:layout_boxedEdges="all">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="UBIQUI CARE HEALTH" />
 
-                <FrameLayout
-                    android:id="@+id/your_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="41dp">
+        </FrameLayout>
 
-                </FrameLayout>
+        <FrameLayout
+            android:id="@+id/reminder_fragment_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
 
-                <FrameLayout
-                    android:id="@+id/your_placeholder_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="95dp">
+            <TextView
+                android:id="@+id/reminderTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Reminder" />
+        </FrameLayout>
 
-                </FrameLayout>
-            </LinearLayout>
-        </ScrollView>
+        <FrameLayout
+            android:id="@+id/heart_rate_fragment_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="45dp">
 
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fall_detection_fragment_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
 
     </LinearLayout>
 

@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import edu.ucsd.cse118.ubiquicare.communication.model.Datapoint;
+import edu.ucsd.cse118.ubiquicare.model.Datapoint;
 import retrofit2.Call;
 
-import edu.ucsd.cse118.ubiquicare.communication.model.HealthDataReport;
-import edu.ucsd.cse118.ubiquicare.communication.model.ResponseStructure;
+import edu.ucsd.cse118.ubiquicare.model.HealthDataReport;
 import retrofit2.Callback;
 import retrofit2.Response;
 

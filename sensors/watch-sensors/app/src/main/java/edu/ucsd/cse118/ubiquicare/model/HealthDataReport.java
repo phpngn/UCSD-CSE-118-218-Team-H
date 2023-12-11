@@ -1,8 +1,7 @@
-package edu.ucsd.cse118.ubiquicare.communication.model;
+package edu.ucsd.cse118.ubiquicare.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class HealthDataReport {

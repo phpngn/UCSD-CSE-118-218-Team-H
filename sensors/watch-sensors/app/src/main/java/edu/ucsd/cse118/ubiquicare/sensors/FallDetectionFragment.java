@@ -10,23 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.beans.*;
 
-import edu.ucsd.cse118.ubiquicare.FallDetectionModel;
-import edu.ucsd.cse118.ubiquicare.communication.HealthValuesConnector;
 import edu.ucsd.cse118.ubiquicare.databinding.FragmentFalldetectionBinding;
-import edu.ucsd.cse118.ubiquicare.databinding.FragmentHeartrateBinding;
 
 
 public class FallDetectionFragment extends Fragment implements SensorEventListener {
@@ -83,7 +73,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         zAcceleration = sensorEvent.values[SensorManager.DATA_Z];
         //Log.d("movement", Float.toString(xAcceleration) +", " + Float.toString(yAcceleration) +", " + Float.toString(zAcceleration));
         totalAcceleration = Math.sqrt(xAcceleration*xAcceleration + yAcceleration*yAcceleration + zAcceleration*zAcceleration);
-       // System.out.println(Arrays.toString(data));
+       //System.out.println(Arrays.toString(data));
         for(int i = 0; i < data.length-1; i++ ){
             data[i] = data[i+1];
         }
@@ -130,7 +120,6 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
             if (totalAcceleration < 5.9 && !fallChanceFlag) {
                 fallChanceFlag = true;
                 index = data.length-1;
-                binding.textView4.setText(Double.toString(Math.round(totalAcceleration)) +"possible fall");
                 return;
             }
 
