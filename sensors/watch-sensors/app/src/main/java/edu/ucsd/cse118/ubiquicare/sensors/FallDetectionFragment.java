@@ -34,8 +34,18 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
 
     private FallDetectionModel fallDetectionModel;
     private Double[] data = new Double[] {9.0,9.0,9.0,9.0,9.0,9.0};
-    private int index = 0;
 
+    private Double[] lowData = new Double[] {9.0,9.0,9.0,9.0,9.0,9.0};
+
+    private Double[] highData = new Double[] {9.0,9.0,9.0,9.0,9.0,9.0};
+
+    private Double[] normalData = new Double[] {9.0,9.0,9.0,9.0,9.0,9.0};
+    private int index = 0;
+    private int windowSize = 8;
+
+    private double low = 0;
+    private double high = 0;
+    private double normal = 0;
     private float numberUpdates = 0;
 
     public FallDetectionFragment (Context mContext) {
@@ -74,55 +84,7 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         //Log.d("movement", Float.toString(xAcceleration) +", " + Float.toString(yAcceleration) +", " + Float.toString(zAcceleration));
         totalAcceleration = Math.sqrt(xAcceleration*xAcceleration + yAcceleration*yAcceleration + zAcceleration*zAcceleration);
        //System.out.println(Arrays.toString(data));
-        for(int i = 0; i < data.length-1; i++ ){
-            data[i] = data[i+1];
-        }
-        data[data.length-1] = totalAcceleration;
-
-
-            if(fallChanceFlag){
-                index--;
-                for(int i = index; i <= data.length-1; i++){
-                    if(index == data.length-2 && i == data.length-1){
-                        if(data[i] < 5.9 || data[i] > 10){
-                            return;
-                        }
-                        else{
-                            fallChanceFlag = false;
-                        }
-                    }
-                    if(index == data.length-3 && i == data.length-1){
-                        if(data[i-1] <  5.9 && data[i] > 10){
-                            return;
-                        }
-                        else if(data[i-1] > 10){
-                            return;
-                        }
-                        else {
-                            fallChanceFlag = false;
-                        }
-                    }
-                    if(index == data.length-4 && i == data.length-1){
-                        if(data[i]>7 && data[i]<11){
-                            //binding.textView5.setText("you fell");
-                            fallDetectionModel.setFallData(true);
-                            fallDetectionModel.setFallValuesData(Arrays.asList(data));
-                            fallChanceFlag = false;
-                            return;
-                        }
-                        else{
-                            fallChanceFlag = false;
-                        }
-                    }
-                }
-            }
-
-            if (totalAcceleration < 5.9 && !fallChanceFlag) {
-                fallChanceFlag = true;
-                index = data.length-1;
-                return;
-            }
-
+        senseFall();
     }
 
     @Override
@@ -140,7 +102,98 @@ public class FallDetectionFragment extends Fragment implements SensorEventListen
         return view;
     }
 
+    public void senseFall(){
+        //move the window one space (removes the oldest value and adds new value at end)
+        for(int i = 0; i < data.length-1; i++ ){
+            data[i] = data[i+1];
+        }
+        data[data.length-1] = totalAcceleration;
 
+        //possible fall sensed
+        if (totalAcceleration < 5 && !fallChanceFlag) {
+            fallChanceFlag = true;
+            index = 0;
+            low = totalAcceleration;
+            Log.d("low val", ((Double)low).toString());
+            return;
+        }
+
+        if(fallChanceFlag){
+            index++;
+            if(index < windowSize && high==0){
+                Log.d("possible high val", ((Double)totalAcceleration).toString());
+                if(totalAcceleration >16){
+                    high=totalAcceleration;
+                    index=0;
+                    Log.d("high val", ((Double)high).toString());
+                }
+                return;
+            }
+
+            if(index < windowSize && high!=0) {
+                if(totalAcceleration >7 && totalAcceleration<13){
+                    //fall detected change state
+                    fallDetectionModel.setFallData(true);
+                    fallDetectionModel.setFallValuesData(Arrays.asList(data));
+                    //reset values for next fall
+                    fallChanceFlag = false;
+                    low = 0;
+                    high = 0;
+                    index = 0;
+                }
+                return;
+            }
+            if(index >= windowSize){
+                //no fall detected reset vals
+                fallChanceFlag = false;
+                low = 0;
+                high = 0;
+                index = 0;
+                return;
+            }
+        }
+
+        /*
+        //if possible fall sensed check following values for fall pattern
+        if(fallChanceFlag){
+            index--;
+            //look from the fall flag to the latest acceleration
+            for(int i = index; i <= data.length-1; i++){
+                if(index == data.length-2 && i == data.length-1){
+                    if(data[i] < 5.9 || data[i] > 10){
+                        return;
+                    }
+                    else{
+                        fallChanceFlag = false;
+                    }
+                }
+                if(index == data.length-3 && i == data.length-1){
+                    if(data[i-1] <  5.9 && data[i] > 10){
+                        return;
+                    }
+                    else if(data[i-1] > 10){
+                        return;
+                    }
+                    else {
+                        fallChanceFlag = false;
+                    }
+                }
+                if(index == data.length-4 && i == data.length-1){
+                    if(data[i]>7 && data[i]<11){
+                        //binding.textView5.setText("you fell");
+                        fallDetectionModel.setFallData(true);
+                        fallDetectionModel.setFallValuesData(Arrays.asList(data));
+                        fallChanceFlag = false;
+                        return;
+                    }
+                    else{
+                        fallChanceFlag = false;
+                    }
+                }
+            }
+        }*/
+
+    }
 
 
 
