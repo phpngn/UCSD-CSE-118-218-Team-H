@@ -6,7 +6,7 @@ public class Datapoint {
     public enum Sensor {
         @SerializedName("heartrate")
         HEART_RATE,
-        @SerializedName("falldetection")
+        @SerializedName("fall")
         FALL_DETECTION;
     }
     private Sensor sensor;
