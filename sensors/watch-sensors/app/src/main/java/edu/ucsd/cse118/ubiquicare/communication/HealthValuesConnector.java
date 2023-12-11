@@ -3,6 +3,7 @@ package edu.ucsd.cse118.ubiquicare.communication;
 import android.util.Log;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,13 +48,15 @@ public class HealthValuesConnector {
     }
 
     public HealthDataReport createHeartRateReport(List<Float> values) {
-        Timestamp timestamp = new Timestamp(new Date().getTime());
-        String formattedTimestamp = timestamp.toString().replaceAll("Z", "");
+        Instant instant = Instant.now();
+        String formattedTimestamp = instant.toString();
+        String finalTimestamp = formattedTimestamp.replaceAll("T", " ").replace("Z", "");
+
         List<Datapoint> datapoints = new ArrayList<>();
         for (Float value : values) {
             datapoints.add(new Datapoint(Datapoint.Sensor.HEART_RATE, value));
         }
-        HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.HEART_RATE, HealthDataReport.EventLevel.REPORT, "device1", formattedTimestamp, datapoints);
+        HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.HEART_RATE, HealthDataReport.EventLevel.REPORT, "device1", finalTimestamp, datapoints);
         return heartRateReport;
     }
 
@@ -83,13 +86,15 @@ public class HealthValuesConnector {
 
     //fall confirmed
     public HealthDataReport createFallDetectionAlert(List<Double> values) {
-        Timestamp timestamp = new Timestamp(new Date().getTime());
-        String formattedTimestamp = timestamp.toString().replaceAll("Z", "");
+        Instant instant = Instant.now();
+        String formattedTimestamp = instant.toString();
+        String finalTimestamp = formattedTimestamp.replaceAll("T", " ").replace("Z", "");
+
         List<Datapoint> datapoints = new ArrayList<>();
         for (Double value : values) {
             datapoints.add(new Datapoint(Datapoint.Sensor.FALL_DETECTION, value.floatValue()));
         }
-        HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.FALL_DETECTION, HealthDataReport.EventLevel.ALERT, "device1", formattedTimestamp, datapoints);
+        HealthDataReport heartRateReport = new HealthDataReport(HealthDataReport.EventType.FALL_DETECTION, HealthDataReport.EventLevel.ALERT, "device1", finalTimestamp, datapoints);
         return heartRateReport;
     }
 }
