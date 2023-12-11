@@ -6,27 +6,6 @@
 	import { onMount } from 'svelte';
 	import {backendHost, currentHeartRate, isEmergency, isFall, notifications, startAllSchedulers} from "$lib/data";
 	onMount(startAllSchedulers);
-
-	let mockNotify = [
-		{
-			id:1,
-			device_id:1,
-			title: 'Heart rate is too high',
-			timestamp: '2021-05-01 12:00:00'
-		},
-		{
-			id:2,
-			device_id:1,
-			title: 'Heart rate is too high',
-			timestamp: '2021-05-01 12:00:00'
-		},
-		{
-			id:3,
-			device_id:1,
-			title: 'Heart rate is too high',
-			timestamp: '2021-05-01 12:00:00'
-		}
-	]
 </script>
 <style>
 
@@ -124,6 +103,21 @@
 		margin-top: 35px;
 		color: #ffffff;
 	}
+	#falls img {
+		margin-top: -15px;
+	}
+	#falls .label {
+		display: block;
+		position: absolute;
+		width: 100%;
+		font-size: 16px;
+		font-weight: 500;
+		text-align: center;
+		top:50%;
+		transform: translateY(-50%);
+		margin-top: 40px;
+		color: #ffffff;
+	}
 	#notifications {
 		width: 600px;
 		min-height: 244px;
@@ -190,6 +184,16 @@
 		border-radius: 10px;
 		line-height: 50px;
 	}
+	.nonotifications {
+		display: block;
+		position: absolute;
+		width: 100%;
+		height: auto;
+		text-align: center;
+		top: 50%;
+		transform: translateY(-50%);
+		font-weight: 600;
+	}
 </style>
 <h1>Dashboard</h1>
 <div class="container">
@@ -199,19 +203,24 @@
 	</div>
 	<div class="widget" id="falls" style="background: {$isFall ? '#ff0000' : '#4db724'}">
 		<img src="{$isFall ? '/falling.png' : '/standing.png'}" alt="" class="value">
+		<span class="label">Fall detection</span>
 	</div>
 	<div class="widget" id="emergency" style="background: {$isEmergency ? '#ff0000' : '#4db724'}">
 		<img src="{$isEmergency ? '/sos.png' : '/ok.png'}" alt="" class="value">
 		<span class="label">Emergency</span>
 	</div>
 	<div class="widget" id="notifications">
-		{#each mockNotify as notification}
-			<div class="notification">
-				<img src="/notification.png" alt="" class="icon">
-				<span class="title">{notification.title}</span>
-				<span class="timestamp">{notification.timestamp}</span>
-			</div>
-		{/each}
+		{#if $notifications.length === 0}
+			<span class="nonotifications">No notifications</span>
+		{:else}
+			{#each $notifications as notification}
+				<div class="notification">
+					<img src="/notification.png" alt="" class="icon">
+					<span class="title">{notification.title}</span>
+					<span class="timestamp">{notification.timestamp}</span>
+				</div>
+			{/each}
+		{/if}
 	</div>
 </div>
 <a id="report" href="{backendHost+'/report'}">Download Report</a>
