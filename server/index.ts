@@ -241,6 +241,20 @@ app.get('/report', async (req, res) => {
     doc.end();
 });
 
+import Parser from 'json2csv';
+app.get('/report/csv', async (req, res) => {
+    let data = await db.getReportData();
+    try {
+        const csv = Parser.parse(data, { fields: ['type', 'value', 'timestamp'] });
+
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=UbiquiCareReport.csv');
+        res.status(200).send(csv);
+    } catch (error) {
+        res.status(500).send("Could not generate CSV")
+    }
+});
+
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

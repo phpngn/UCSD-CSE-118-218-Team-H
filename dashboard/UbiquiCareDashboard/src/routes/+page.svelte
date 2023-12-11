@@ -171,14 +171,14 @@
 		color: #afafaf;
 		line-height: 60px;
 	}
-	#report {
+	#reportpdf, #reportcsv {
 		display: block;
 		position: relative;
 		width: 300px;
 		left: 50%;
 		transform: translateX(-50%);
-		margin-top: 50px;
-		margin-bottom: 50px;
+		margin-top: 20px;
+		margin-bottom: 10px;
 		text-decoration: none;
 		background: #0081ff;
 		color: #ffffff;
@@ -188,6 +188,9 @@
 		height: 50px;
 		border-radius: 10px;
 		line-height: 50px;
+	}
+	#reportpdf {
+		margin-top: 50px;
 	}
 	.nonotifications {
 		display: block;
@@ -228,4 +231,5 @@
 		{/if}
 	</div>
 </div>
-<a id="report" href="{backendHost+'/report'}">Download Report</a>
+<a id="reportpdf" href="{backendHost+'/report'}">Download PDF Report</a>
+<a id="reportcsv" href="{backendHost+'/report/csv'}">Download CSV Report</a>
