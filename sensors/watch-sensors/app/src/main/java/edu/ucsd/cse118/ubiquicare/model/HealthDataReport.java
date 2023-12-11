@@ -10,7 +10,7 @@ public class HealthDataReport {
         HEART_RATE,
         @SerializedName("bloodoxygen")
         BLOOD_OXYGEN,
-        @SerializedName("falldetection")
+        @SerializedName("fall")
         FALL_DETECTION;
     }
 
